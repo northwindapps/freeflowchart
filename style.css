@@ -1,0 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+* {
+	padding: 0px;
+	margin: 0px;
+	box-sizing: border-box;
+}
+
+html,body{
+	width: 500vw;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.bar{
+    background-color: yellow;
+    display: block;
+    position: relative;
+    top: 100px;
+    left: 70px;
+    height: 30px;
+}
+
+.foo{
+    background-color: gray;
+    display: block;
+    position: sticky;
+    height: 30px;
+}
+
+.easy{
+    background-color: cyan;
+    display: block;
+    position: relative;
+    top: 100px;
+    left: 70px;
+    height: 30px;
+}
+
+.diamond{
+    width: 0;
+    height: 0;
+    border: 90px solid transparent;
+    border-bottom: 60px solid gainsboro;
+    position: relative;
+    top: 0px;
+}
+
+.diamond:after {
+	content: '';
+	position: absolute;
+	left: -90px;
+	top: 60px;
+	width: 0;
+	height: 0;
+	border: 90px solid transparent;
+	border-top: 60px solid gainsboro;
+}
+
+.line{
+    height: 150px;
+    width: 90px;
+    border-bottom: solid 1px gainsboro;
+}
+
+.process{
+    position: relative;
+    height: 100px;
+    top: 100px;
+    width: 180px;
+    display: inline-block;
+    border: solid 1px gainsboro;
+}
+
+ul{
+    display: flex;
+    list-style: none;
+}
+
+li{
+    width: 100%;
+    text-align: center;
+}
