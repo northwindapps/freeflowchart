@@ -82,6 +82,7 @@ html,body{
     width: 180px;
     display: inline-block;
     border: solid 1px gainsboro;
+    border-radius: 5px;
 }
 
 .ifel{
