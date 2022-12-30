@@ -6,9 +6,12 @@
 }
 
 html,body{
-	width: 100vw;
+	width: 500vw;
     box-sizing: border-box;
- 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .bar{
@@ -84,7 +87,7 @@ html,body{
 
 .ifel{
     content: '';
-    position: relative;
+    position: absolute;
     top: -50px;
     left: 90px;
     border-left: 1px solid gainsboro;
@@ -98,10 +101,10 @@ html,body{
 }
 .endifel div.rect{
     position: absolute;
-    top: 172px;
+    top: 150px;
     border-left: 1px solid gainsboro;
     width: 185px;
-    height: 152px;
+    height: 250px;
 }
 
 .endprocess{
@@ -172,9 +175,4 @@ li.half div {
 
 .branch{
     display: flex;
-}
-
-.ui button{
-    width: 150px;
-    height: 50px;
 }
