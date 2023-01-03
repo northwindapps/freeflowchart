@@ -154,6 +154,7 @@ ul#main{
 li{
     width: 180px;
     text-align: center;
+    position: relative;
 }
 
 li.half {

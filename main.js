@@ -17,7 +17,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
     function addBranch() {
         var li = document.createElement("li");
-        li.setAttribute("class", "branch"); 
+        li.setAttribute("class", "branch " + "branch" + ulIdx); 
         li.innerHTML = '<ul></ul>';
         mainUL.appendChild(li);
         ulIdx += 1;
@@ -25,49 +25,59 @@ window.addEventListener('DOMContentLoaded', function() {
     }
 
     function addProcess() {
-        var branchULs = document.querySelectorAll('.branch ul');
+        // var theBranchUL = document.querySelectorAll(".branch"+ ulIdx-1 +" ul");
+        var query = ".branch" + String(ulIdx-1) + " ul";
+        var theBranchUL = document.querySelector(query);
         var li = document.createElement("li");
         // li.setAttribute("class", "branch"); 
         li.innerHTML = '<p class="process">how</p><div class="arrow"></div>';
-        branchULs[ulIdx-1].appendChild(li);
+        theBranchUL.appendChild(li);
 
         var liLine = document.createElement("li");
         liLine.setAttribute("class", "half"); 
         liLine.innerHTML = '<div class="line"></div>';
-        branchULs[ulIdx-1].appendChild(liLine);
-        console.log('process');
+        theBranchUL.appendChild(liLine);
+        console.log('branch');
     }
 
     function addIfelse() {
-        var branchULs = document.querySelectorAll('.branch ul');
+        // var theBranchUL = document.querySelectorAll('.branch ul');
+        var query = ".branch" + String(ulIdx-1) + " ul";
+        var theBranchUL = document.querySelector(query);
 
-        if (branchULs.length == 0){
+        if (!theBranchUL){
             addBranch();
         }
         
         //switch to else part
         addBranch();
-        branchULs = document.querySelectorAll('.branch ul');
+        // theBranchUL = document.querySelectorAll('.branch ul');
+        query = ".branch" + String(ulIdx-1) + " ul";
+        theBranchUL = document.querySelector(query);
         var li = document.createElement("li");
         li.innerHTML = '<div class="ifel"></div>';
-        branchULs[ulIdx-1].appendChild(li);
+        theBranchUL.appendChild(li);
         ulIdx -= 1;
 
+
         //back to if part
+        query = ".branch" + String(ulIdx-1) + " ul";
+        theBranchUL = document.querySelector(query);
         var diamond = document.createElement("li");
         diamond.setAttribute("class", "d"); 
         diamond.innerHTML = '<div class="diamond">hi</div>';
-        branchULs[ulIdx-1].appendChild(diamond);
+        theBranchUL.appendChild(diamond);
         console.log('process');
 
         var liLine = document.createElement("li");
         liLine.setAttribute("class", "half"); 
         liLine.innerHTML = '<div class="line"></div>';
-        branchULs[ulIdx-1].appendChild(liLine);
+        theBranchUL.appendChild(liLine);
     }
 
     function checkULSize(ulInt){
-        var branchULs = document.querySelectorAll('.branch ul');     
+        var query = ".branch" + String(ulIdx-1) + " ul";
+        var theBranchUL = document.querySelector(query);    
 
     }
 });
