@@ -89,17 +89,17 @@ window.addEventListener('DOMContentLoaded', function() {
         var query2 = ".branch" + String(ulIdx) + " .half";
         liHalfs = document.querySelectorAll(query2);
         console.log(liHalfs);
-        var query3 = ".branch" + String(ulIdx) + " li";
-        allLis = document.querySelectorAll(query3);
+        var query3 = ".branch" + String(ulIdx) + " .process";
+        plis = document.querySelectorAll(query3);
         var query4 = ".branch" + String(ulIdx) + " .d";
         allDiamonds = document.querySelectorAll(query4);
         console.log(allDiamonds);
 
         var val = 0.0;
 
-        val = 180.0 * allLis.length;
-        val -= 90.0 * liHalfs.length; 
-        console.log(allLis.length);
+        val = 180.0 * plis.length;
+        val += 90.0 * liHalfs.length; 
+        console.log(plis.length);
         console.log(liHalfs.length);
         console.log(val);
 
@@ -112,8 +112,7 @@ window.addEventListener('DOMContentLoaded', function() {
         li.innerHTML = '<div class="ifel"></div>';
         
         //relative
-        if (allLis.length > 0) {
-            val -=  180.0 * (allDiamonds.length);
+        if (plis.length > 0) {
             var floored = Math.floor(val);
             console.log(val);
             li.style.left=`${floored}px`;    
