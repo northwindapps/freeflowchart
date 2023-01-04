@@ -10,14 +10,14 @@ window.addEventListener('DOMContentLoaded', function() {
     var mainUL = document.querySelector('#main');
     var ulIdx = 0;
     
-    addProcessBtn.addEventListener('click', addProcess, false);
-    addLineBtn.addEventListener('click', addLine, false);
-    addLaneBtn.addEventListener('click', addLane, false);
-    substractLaneBtn.addEventListener('click', substractLane, false);
+    addProcessBtn.addEventListener("click", ()=>{ addProcess();});
+    addLineBtn.addEventListener("click", ()=>{ addLine();});
+    addLaneBtn.addEventListener("click", ()=>{ addLane();});
+    substractLaneBtn.addEventListener("click", ()=>{ substractLane();});
     addBranchBtn.addEventListener("click", ()=>{
         addBranch();
     });
-    addIfelseBtn.addEventListener('click', addIfelse, false);
+    addIfelseBtn.addEventListener("click", ()=>{ addIfelse();});
     function addProcess() {
 
         console.log('process');
@@ -33,17 +33,23 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log(ulIdx);
     }
 
-    function addLine() {
+    function addLine(x=0) {
         
         var query = ".branch" + String(ulIdx) + " ul";
         var theBranchUL = document.querySelector(query);
         var li = document.createElement("li");
         li.innerHTML = '<div class="line"></div>';
+        if (x!=0) {
+            li.style.left=`${x}px`;    
+        }
         theBranchUL.appendChild(li);
 
         var li2 = document.createElement("li");
         li2.setAttribute("class", "half");
         li2.innerHTML = '<div class="line"></div>';
+        if (x!=0) {
+            li2.style.left=`${x}px`;    
+        }
         theBranchUL.appendChild(li2);
         console.log(li2);
          
@@ -61,17 +67,23 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log(baseUlIdx);
     }
 
-    function addProcess() {
+    function addProcess(x=0) {
         // var theBranchUL = document.querySelectorAll(".branch"+ ulIdx-1 +" ul");
         var query = ".branch" + String(ulIdx) + " ul";
         var theBranchUL = document.querySelector(query);
         var li = document.createElement("li");
         li.innerHTML = '<p class="process">how</p><div class="arrow"></div>';
+        if (x!=0) {
+            li.style.left=`${x}px`;    
+        }
         theBranchUL.appendChild(li);
 
         var liLine = document.createElement("li");
         liLine.setAttribute("class", "half"); 
         liLine.innerHTML = '<div class="line"></div>';
+        if (x!=0) {
+            liLine.style.left=`${x}px`;    
+        }
         theBranchUL.appendChild(liLine);
         console.log('process');
     }
@@ -95,10 +107,14 @@ window.addEventListener('DOMContentLoaded', function() {
         allDiamonds = document.querySelectorAll(query4);
         console.log(allDiamonds);
 
+        var query5 = ".branch" + String(ulIdx) + " .line";
+        lis = document.querySelectorAll(query5);
+
         var val = 0.0;
 
         val = 180.0 * plis.length;
-        val += 90.0 * liHalfs.length; 
+        val += 90.0 * liHalfs.length;
+        val += 180.0 * (lis.length - liHalfs.length); 
         console.log(plis.length);
         console.log(liHalfs.length);
         console.log(val);
