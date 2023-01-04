@@ -5,11 +5,15 @@ window.addEventListener('DOMContentLoaded', function() {
     var addBranchBtn = document.querySelector('#addbranch');
     var addIfelseBtn = document.querySelector('#addif');
     var addLineBtn = document.querySelector('#addline');
+    var addLaneBtn = document.querySelector('#addlane');
+    var substractLaneBtn = document.querySelector('#substractlane');
     var mainUL = document.querySelector('#main');
     var ulIdx = 0;
     
     addProcessBtn.addEventListener('click', addProcess, false);
     addLineBtn.addEventListener('click', addLine, false);
+    addLaneBtn.addEventListener('click', addLane, false);
+    substractLaneBtn.addEventListener('click', substractLane, false);
     addBranchBtn.addEventListener("click", ()=>{
         addBranch();
     });
@@ -17,6 +21,16 @@ window.addEventListener('DOMContentLoaded', function() {
     function addProcess() {
 
         console.log('process');
+    }
+
+    function addLane() {
+        ulIdx += 1;
+        console.log(ulIdx);
+    }
+
+    function substractLane() {
+        ulIdx -= 1;
+        console.log(ulIdx);
     }
 
     function addLine() {
@@ -81,10 +95,10 @@ window.addEventListener('DOMContentLoaded', function() {
         allDiamonds = document.querySelectorAll(query4);
         console.log(allDiamonds);
 
-        var val = 0;
+        var val = 0.0;
 
-        val = 180 * allLis.length;
-        val -= 90 * liHalfs.length; 
+        val = 180.0 * allLis.length;
+        val -= 90.0 * liHalfs.length; 
         console.log(allLis.length);
         console.log(liHalfs.length);
         console.log(val);
@@ -98,8 +112,11 @@ window.addEventListener('DOMContentLoaded', function() {
         li.innerHTML = '<div class="ifel"></div>';
         
         //relative
-        if (val >= 180) {
-            li.style.left=`${val - ( 180 * allDiamonds.length-1)}px`;    
+        if (allLis.length > 0) {
+            val -=  180.0 * (allDiamonds.length);
+            var floored = Math.floor(val);
+            console.log(val);
+            li.style.left=`${floored}px`;    
         }
         theBranchUL.appendChild(li);
 
