@@ -17,7 +17,7 @@ window.addEventListener('DOMContentLoaded', function() {
     addBranchBtn.addEventListener("click", ()=>{
         addBranch();
     });
-    addIfelseBtn.addEventListener("click", ()=>{ addIfelse();});
+    addIfelseBtn.addEventListener("click", ()=>{ addIfelse(x=90);});
     function addProcess() {
 
         console.log('process');
@@ -88,7 +88,7 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log('process');
     }
 
-    function addIfelse() {
+    function addIfelse(x=0) {
         var query = ".branch" + String(ulIdx) + " ul";
         var theBranchUL = document.querySelector(query);
 
@@ -128,10 +128,12 @@ window.addEventListener('DOMContentLoaded', function() {
         li.innerHTML = '<div class="ifel"></div>';
         
         //relative
-        if (plis.length > 0) {
-            var floored = Math.floor(val);
+        if (x!=0 && val > 0) {
+            li.style.left=`${x+val}px`;    
+        }
+        else if (val > 0) {
             console.log(val);
-            li.style.left=`${floored}px`;    
+            li.style.left=`${x+val}px`;    
         }
         theBranchUL.appendChild(li);
 
@@ -143,12 +145,18 @@ window.addEventListener('DOMContentLoaded', function() {
         var diamond = document.createElement("li");
         diamond.setAttribute("class", "d"); 
         diamond.innerHTML = '<div class="diamond">hi</div>';
+        if (x!=0) {
+            diamond.style.left=`${x}px`;    
+        }
         theBranchUL.appendChild(diamond);
         console.log('process');
 
         var liLine = document.createElement("li");
         liLine.setAttribute("class", "half"); 
         liLine.innerHTML = '<div class="line"></div>';
+        if (x!=0) {
+            liLine.style.left=`${x}px`;    
+        }
         theBranchUL.appendChild(liLine);
     }
 
