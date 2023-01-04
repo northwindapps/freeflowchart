@@ -4,10 +4,12 @@ window.addEventListener('DOMContentLoaded', function() {
     var addProcessBtn = document.querySelector('#addprocess');
     var addBranchBtn = document.querySelector('#addbranch');
     var addIfelseBtn = document.querySelector('#addif');
+    var addLineBtn = document.querySelector('#addline');
     var mainUL = document.querySelector('#main');
     var ulIdx = 0;
     
     addProcessBtn.addEventListener('click', addProcess, false);
+    addLineBtn.addEventListener('click', addLine, false);
     addBranchBtn.addEventListener("click", ()=>{
         addBranch();
     });
@@ -15,6 +17,22 @@ window.addEventListener('DOMContentLoaded', function() {
     function addProcess() {
 
         console.log('process');
+    }
+
+    function addLine() {
+        
+        var query = ".branch" + String(ulIdx) + " ul";
+        var theBranchUL = document.querySelector(query);
+        var li = document.createElement("li");
+        li.innerHTML = '<div class="line"></div>';
+        theBranchUL.appendChild(li);
+
+        var li2 = document.createElement("li");
+        li2.setAttribute("class", "half");
+        li2.innerHTML = '<div class="line"></div>';
+        theBranchUL.appendChild(li2);
+        console.log(li2);
+         
     }
 
     function addBranch(baseUlIdx = 0) {
