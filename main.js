@@ -1,168 +1,115 @@
-window.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM is loaded')
+var ta = null;
+var ta2 = null;
+var str = '';
+var reservedWordsList = ['if','else','endif','endprocess','endflow','none','then'];
+let tokenList = [];
+let rwList = [];
+var token = '';
+var readChars = '';
 
-    var addProcessBtn = document.querySelector('#addprocess');
-    var addBranchBtn = document.querySelector('#addbranch');
-    var addIfelseBtn = document.querySelector('#addif');
-    var addLineBtn = document.querySelector('#addline');
-    var addLaneBtn = document.querySelector('#addlane');
-    var substractLaneBtn = document.querySelector('#substractlane');
-    var mainUL = document.querySelector('#main');
-    var ulIdx = 0;
+function getSrc () {
+var src = ta.value.replace(/\n\r?/g, ' <>');
+src = src + '<>';
+getValue(src)
+console.log(src);
+}
+
+function getSrc2 () {
+    var src = ta2.value.replace(/\n\r?/g, ' <>');
+    src = src + '<>';
+    getValue(src)
+    console.log(src);
+    }
+
+function getValue(data){
+    tokenList = [];
+    rwList = [];
+
+    for(let key of Object.values(data)){
+        // console.log(str);
+        //todo if special symbols[,{} ()]
+
+        if (reservedWordsList.includes(token.replace('<>','').replace(' ',''))) {
+            
+            // token = token.replace(/\s/g, '').replace('<>','');
+        
+            //TODO
+            if (token == 'if') {
+                //regular expression if there is an  else after an if?
+                tokenList.push(token);
+                rwList.push(token);
+                token ='';
+            }
+
+            if (token == 'else') {
+                //regular expression if there is an  else after an if?
+                tokenList.push(token);
+                rwList.push(token);
+                token ='';
+            }
+
+            if (token == 'endif') {
+                //regular expression if there is an  else after an if?
+                tokenList.push(token);
+                token ='';
+            }
+
+            if (token == 'endflow') {
+                tokenList.push(token);
+                token='';
+            }
+
+            if (token == 'endprocess') {
+                //regular expression if there is an  else after an if?
+                tokenList.push('end');
+                token ='';
+            }
+
+            if (token == 'then'){
+                tokenList.push(token);
+                token = '';
+           }
+
+           if (token == 'none'){
+                tokenList.push(token);
+                token = '';
+           }
+
+           
+           
     
-    addProcessBtn.addEventListener("click", ()=>{ addProcess();});
-    addLineBtn.addEventListener("click", ()=>{ addLine();});
-    addLaneBtn.addEventListener("click", ()=>{ addLane();});
-    substractLaneBtn.addEventListener("click", ()=>{ substractLane();});
-    addBranchBtn.addEventListener("click", ()=>{
-        addBranch();
-    });
-    addIfelseBtn.addEventListener("click", ()=>{ addIfelse(x=90);});
-    function addProcess() {
+            
+        }
 
-        console.log('process');
-    }
+        token = token.concat('',key);
+        readChars = readChars.concat('',key);
 
-    function addLane() {
-        ulIdx += 1;
-        console.log(ulIdx);
-    }
-
-    function substractLane() {
-        ulIdx -= 1;
-        console.log(ulIdx);
-    }
-
-    function addLine(x=0) {
+        if(token.includes('<>')){
+            //<'br'> not working 
+                //what should i do?
+            // console.log(token.replace(/\s/g, '').replace('<>',''));
+            token = token.replace('<>','');
+            tokenList.push(token);
+            token ='';
+        }
         
-        var query = ".branch" + String(ulIdx) + " ul";
-        var theBranchUL = document.querySelector(query);
-        var li = document.createElement("li");
-        li.innerHTML = '<div class="line"></div>';
-        if (x!=0) {
-            li.style.left=`${x}px`;    
-        }
-        theBranchUL.appendChild(li);
-
-        var li2 = document.createElement("li");
-        li2.setAttribute("class", "half");
-        li2.innerHTML = '<div class="line"></div>';
-        if (x!=0) {
-            li2.style.left=`${x}px`;    
-        }
-        theBranchUL.appendChild(li2);
-        console.log(li2);
-         
-    }
-
-    function addBranch(baseUlIdx = 0) {
-        if (!baseUlIdx) {
-            baseUlIdx = ulIdx;
-        }
-        var li = document.createElement("li");
-        li.setAttribute("class", "branch " + "branch" + baseUlIdx); 
-        li.innerHTML = '<ul></ul>';
-        mainUL.appendChild(li);
-        console.log('branch');
-        console.log(baseUlIdx);
-    }
-
-    function addProcess(x=0) {
-        // var theBranchUL = document.querySelectorAll(".branch"+ ulIdx-1 +" ul");
-        var query = ".branch" + String(ulIdx) + " ul";
-        var theBranchUL = document.querySelector(query);
-        var li = document.createElement("li");
-        li.innerHTML = '<p class="process">how</p><div class="arrow"></div>';
-        if (x!=0) {
-            li.style.left=`${x}px`;    
-        }
-        theBranchUL.appendChild(li);
-
-        var liLine = document.createElement("li");
-        liLine.setAttribute("class", "half"); 
-        liLine.innerHTML = '<div class="line"></div>';
-        if (x!=0) {
-            liLine.style.left=`${x}px`;    
-        }
-        theBranchUL.appendChild(liLine);
-        console.log('process');
-    }
-
-    function addIfelse(x=0) {
-        var query = ".branch" + String(ulIdx) + " ul";
-        var theBranchUL = document.querySelector(query);
-
-        if (!theBranchUL){
-            addBranch();
-        }
-       
-        
-        //TODO calculate ifel left px 
-        var query2 = ".branch" + String(ulIdx) + " .half";
-        liHalfs = document.querySelectorAll(query2);
-        console.log(liHalfs);
-        var query3 = ".branch" + String(ulIdx) + " .process";
-        plis = document.querySelectorAll(query3);
-        var query4 = ".branch" + String(ulIdx) + " .d";
-        allDiamonds = document.querySelectorAll(query4);
-        console.log(allDiamonds);
-
-        var query5 = ".branch" + String(ulIdx) + " .line";
-        lis = document.querySelectorAll(query5);
-
-        var val = 0.0;
-
-        val = 180.0 * plis.length;
-        val += 90.0 * liHalfs.length;
-        val += 180.0 * (lis.length - liHalfs.length); 
-        console.log(plis.length);
-        console.log(liHalfs.length);
-        console.log(val);
-
-
-        //switch to else part
-        addBranch(ulIdx+1);
-        query = ".branch" + String(ulIdx+1) + " ul";
-        theBranchUL = document.querySelector(query);
-        var li = document.createElement("li");
-        li.innerHTML = '<div class="ifel"></div>';
-        
-        //relative
-        if (x!=0 && val > 0) {
-            li.style.left=`${x+val}px`;    
-        }
-        else if (val > 0) {
-            console.log(val);
-            li.style.left=`${x+val}px`;    
-        }
-        theBranchUL.appendChild(li);
-
-       
-
-        //back to if part
-        query = ".branch" + String(ulIdx) + " ul";
-        theBranchUL = document.querySelector(query);
-        var diamond = document.createElement("li");
-        diamond.setAttribute("class", "d"); 
-        diamond.innerHTML = '<div class="diamond">hi</div>';
-        if (x!=0) {
-            diamond.style.left=`${x}px`;    
-        }
-        theBranchUL.appendChild(diamond);
-        console.log('process');
-
-        var liLine = document.createElement("li");
-        liLine.setAttribute("class", "half"); 
-        liLine.innerHTML = '<div class="line"></div>';
-        if (x!=0) {
-            liLine.style.left=`${x}px`;    
-        }
-        theBranchUL.appendChild(liLine);
-    }
-
-    function checkULSize(ulInt){
-        var query = ".branch" + String(ulIdx) + " ul";
-        var theBranchUL = document.querySelector(query);    
 
     }
-});
+    console.log(tokenList);
+    console.log(readChars);
+    sessionStorage.setItem("src", JSON.stringify(tokenList));
+    window.location.href = './chart.html';
+}
+
+
+window.onload = function() {
+    ta = document.querySelector("#ta");
+    ta2 = document.querySelector("#ta2");
+    
+    // your code 
+    console.log('welcome back');
+
+
+    
+};
+
