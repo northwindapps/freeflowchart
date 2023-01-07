@@ -90,8 +90,8 @@ html,body{
     /* left: 422px; */
     border-left: 1px solid gainsboro;
     border-bottom: 1px solid gainsboro;
-    width: 185px;
-    height: 250px;
+    width: 200px;
+    height: 255px;
 }
 
 .ifthen{
@@ -110,10 +110,10 @@ html,body{
 }
 .endifel div.rect{
     position: absolute;
-    top: 172px;
+    top: 155px;
     border-left: 1px solid gainsboro;
     width: 185px;
-    height: 152px;
+    height: 313px;
 }
 
 .endprocess{
@@ -173,12 +173,12 @@ li{
 }
 
 li.half {
-    width: 90px;
+    width: 110px;
     text-align: center;
 }
 
 li.half div {
-    width: 90px;
+    width: 110px;
     text-align: center;
 }
 
