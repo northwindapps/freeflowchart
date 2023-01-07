@@ -111,7 +111,8 @@ window.addEventListener('DOMContentLoaded', function() {
                         addLine(x=0,baseline=ulIdx+1,status = 2);
                         addLine(x=0,baseline=ulIdx+1,status = 2);
                         endIfel();
-                        addLine(status=0);    
+                        addLine(status=0);
+                        absElseLane = null;  
                     }
                     
                     status = 0;
@@ -277,7 +278,7 @@ window.addEventListener('DOMContentLoaded', function() {
             baseline -= 1;
             var li = document.createElement("li");
             li.setAttribute("class", "abs"); 
-            li.innerHTML = '<p class="process">'+`${body}`+'</p>';
+            li.innerHTML = '<p class="process">'+`${body}`+'</p><div class="arrow-down"></div>';
 
             var query2 = ".branch" + String(baseline) + " .half";
             liHalfs = document.querySelectorAll(query2);

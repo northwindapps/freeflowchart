@@ -90,7 +90,7 @@ html,body{
     /* left: 422px; */
     border-left: 1px solid gainsboro;
     border-bottom: 1px solid gainsboro;
-    width: 200px;
+    width: 215px;
     height: 255px;
 }
 
@@ -128,7 +128,7 @@ html,body{
 }
 
 .endprocess div.arrow{
-    top: 17px !important;
+    top: 12px !important;
     width: 0px !important;
 }
 
@@ -147,11 +147,22 @@ html,body{
     width: 0;
     position: absolute;
     height: 0;
-    top: 144px;
+    top: 140px;
     margin-left: -10px;
-    border-top: 5px solid transparent;
-    border-left: 10px solid gainsboro;
-    border-bottom: 5px solid transparent;
+    border-top: 10px solid transparent;
+    border-left: 15px solid gainsboro;
+    border-bottom: 10px solid transparent;
+}
+
+.arrow-down{
+    content: '';
+    position: absolute;
+    left: 100px;
+    top: 65px;
+    width: 0;
+    height: 0;
+    border: 10px solid transparent;
+    border-top: 15px solid gainsboro;
 }
 
 ul{
