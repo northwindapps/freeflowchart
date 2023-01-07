@@ -148,6 +148,10 @@ window.addEventListener('DOMContentLoaded', function() {
                     if (filtered[index] && status == 0) {
                         addProcess(x=0,baseline=ulIdx,filtered[index]);
                     }
+
+                    if (filtered[index] && status == 1) {
+                        addProcess(x=0,baseline=ulIdx,filtered[index]);
+                    }
                     
                     break;
             }
