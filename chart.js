@@ -76,10 +76,10 @@ window.addEventListener('DOMContentLoaded', function() {
                 //     status = 0;
                 //     await endIfElse();
                 //     break;
-                // case 'endflow':
-                //     status = 0;
-                //     await endFlow();
-                //     break;
+                case 'endflow':
+                    status = 0;
+                    await endFlow();
+                    break;
                 
                 // case 'end':
                 //     if (status == 2) {
@@ -276,6 +276,19 @@ window.addEventListener('DOMContentLoaded', function() {
             liLine.style.left=`${x}px`;    
         }
         theBranchUL.appendChild(liLine);
+    }
+
+    function endFlow(x=0,baseline=ulIdx,status=0) {
+        // var theBranchUL = document.querySelectorAll(".branch"+ ulIdx-1 +" ul");
+        var query = ".branch" + String(baseline) + " ul";
+        var theBranchUL = document.querySelector(query);
+        var li = document.createElement("li");
+        li.setAttribute("class", "half"); 
+        li.innerHTML = '<div class="endprocess"><div class="arrow"></div></div>';
+        if (x!=0) {
+            li.style.left=`${x}px`;    
+        }
+        theBranchUL.appendChild(li);
     }
 
     function checkULSize(ulInt){

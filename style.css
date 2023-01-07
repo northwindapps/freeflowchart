@@ -75,7 +75,7 @@ html,body{
 .process{
     position: relative;
     height: 100px;
-    top: 100px;
+    top: 150px;
     width: 180px;
     display: inline-block;
     border: solid 1px gainsboro;
@@ -85,7 +85,7 @@ html,body{
 .ifel{
     content: '';
     position: relative;
-    top: -50px;
+    top: 0px;
     left: 90px;
     border-left: 1px solid gainsboro;
     border-bottom: 1px solid gainsboro;
@@ -135,7 +135,7 @@ html,body{
     width: 0;
     position: absolute;
     height: 0;
-    top: 144px;
+    top: 193px;
     margin-left: -10px;
     border-top: 5px solid transparent;
     border-left: 10px solid gainsboro;
@@ -152,6 +152,7 @@ ul#main{
 }
 
 li{
+    top: 25px;
     width: 180px;
     text-align: center;
     position: relative;
