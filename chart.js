@@ -51,7 +51,6 @@ window.addEventListener('DOMContentLoaded', function() {
         }
         
         console.log(filtered);
-        var j = 0;
         for (let index = 0; index < filtered.length; index++) {
             console.log(filtered[index]);
             switch (filtered[index]) {
@@ -61,6 +60,11 @@ window.addEventListener('DOMContentLoaded', function() {
                     while(index2<filtered.length){
                         if (filtered[index2] == 'then') {
                             nextIsThen = true;
+                            break;
+                        }
+                        if (filtered[index2] == 'else') {
+                            nextIsThen = false;
+                            break;
                         }
                         index2+=1;
                     }
@@ -79,7 +83,7 @@ window.addEventListener('DOMContentLoaded', function() {
                     if (filtered[index+1]) {
                         var query = ".branch" + String(ulIdx) + " .d";
                         allDiamonds = document.querySelectorAll(query);
-                        addProcess(x=-90*allDiamonds.length,baseline=ulIdx+1,filtered[index+1],status=status);
+                        addProcess(x=0,baseline=ulIdx+1,filtered[index+1],status=status);
                     }
                     // addLine();
                     filtered[index+1] = '';
@@ -97,6 +101,9 @@ window.addEventListener('DOMContentLoaded', function() {
                     status = 0;
                     await endFlow();
                     break;
+                case 'endif':
+                    status = 0;
+                    break;    
                 
                 // case 'end':
                 //     if (status == 2) {
@@ -198,9 +205,20 @@ window.addEventListener('DOMContentLoaded', function() {
         // var theBranchUL = document.querySelectorAll(".branch"+ ulIdx-1 +" ul");
         var query = ".branch" + String(baseline) + " ul";
         var theBranchUL = document.querySelector(query);
+        var isFirstElment = false;
+        if (!theBranchUL){
+            addBranch(x = baseline);
+            theBranchUL = document.querySelector(query);
+            isFirstElment = true;
+        }
+ 
         if (status != 3) {
             var li = document.createElement("li");
-            li.innerHTML = '<p class="process">'+`${body}`+'</p><div class="arrow"></div>';
+            if (isFirstElment) {
+                li.innerHTML = '<p class="process">'+`${body}`+'</p>';
+            }else{
+                li.innerHTML = '<p class="process">'+`${body}`+'</p><div class="arrow"></div>';
+            }
             if (x!=0) {
                 li.style.left=`${x}px`;    
             }
@@ -211,14 +229,30 @@ window.addEventListener('DOMContentLoaded', function() {
             if (x!=0) {
                 liLine.style.left=`${x}px`;    
             }
-            theBranchUL.appendChild(liLine);    
+            theBranchUL.appendChild(liLine);  
         }else{
+            baseline -= 1;
             var li = document.createElement("li");
+            li.setAttribute("class", "abs"); 
             li.innerHTML = '<p class="process">'+`${body}`+'</p>';
-            if (x!=0) {
-                x -= 90;
-                li.style.left=`${x}px`;    
-            }
+
+            var query2 = ".branch" + String(baseline) + " .half";
+            liHalfs = document.querySelectorAll(query2);
+            console.log(liHalfs);
+            var query3 = ".branch" + String(baseline) + " .process";
+            plis = document.querySelectorAll(query3);
+            var query4 = ".branch" + String(baseline) + " .d";
+            allDiamonds = document.querySelectorAll(query4);
+            console.log(allDiamonds);
+
+            var query5 = ".branch" + String(baseline) + " .line";
+            lis = document.querySelectorAll(query5);
+            // if (x!=0) {
+            //     x -= 90;
+            //     li.style.left=`${x}px`;    
+            // }
+            var val = plis.length * 220.0 + (allDiamonds.length-1) * 220.0 + (liHalfs.length-1) * 90.0; 
+            li.style.left=`${val}px`;    
             theBranchUL.appendChild(li);
         }
         
@@ -231,6 +265,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
         if (!theBranchUL){
             addBranch(x = baseline);
+            theBranchUL = document.querySelector(query);
         }
        
         
@@ -308,7 +343,28 @@ window.addEventListener('DOMContentLoaded', function() {
 
         if (!theBranchUL){
             addBranch(x = baseline);
+            theBranchUL = document.querySelector(query);
         }
+
+         //if part
+         query = ".branch" + String(baseline) + " ul";
+         theBranchUL = document.querySelector(query);
+         var diamond = document.createElement("li");
+         diamond.setAttribute("class", "d"); 
+         diamond.innerHTML = '<div class="diamond"><p class="d-body">'+`${body}`+'</p></div>';
+         if (x!=0) {
+            //  diamond.style.left=`${x}px`;    
+         }
+         theBranchUL.appendChild(diamond);
+         console.log('process');
+ 
+         var liLine = document.createElement("li");
+         liLine.setAttribute("class", "half"); 
+         liLine.innerHTML = '<div class="line"></div>';
+         if (x!=0) {
+            //  liLine.style.left=`${x}px`;    
+         }
+         theBranchUL.appendChild(liLine);
        
         
         //TODO calculate ifel left px 
@@ -324,8 +380,9 @@ window.addEventListener('DOMContentLoaded', function() {
         var query5 = ".branch" + String(baseline) + " .line";
         lis = document.querySelectorAll(query5);
 
+        //diamond half
         var val = 0.0;
-
+        val = (liHalfs.length-1)*90.0 + plis.length*220.0 + (allDiamonds.length-1)*220.0 + 110.0;
         // val = 180.0 * plis.length;
         // val += 90.0 * liHalfs.length;
         // val += 180.0 * (lis.length - liHalfs.length); 
@@ -342,41 +399,24 @@ window.addEventListener('DOMContentLoaded', function() {
             theBranchUL = document.querySelector(query);
         }
         var li = document.createElement("li");
+        li.setAttribute("class", "abs"); 
         li.innerHTML = '<div class="ifthen"></div>';
         
         //relative
         if (x!=0 && val > 0) {
-            li.style.left=`${x+val}px`;    
+            // li.style.left=`${x+val}px`;    
         }
         else if (val > 0) {
             console.log(val);
-            li.style.left=`${x+val}px`;    
+            // li.style.left=`${x+val}px`;    
         }
-        val = allDiamonds.length * -90.0;
+
+        
+
         li.style.left=`${val}px`; 
         theBranchUL.appendChild(li);
 
-       
-
-        //back to if part
-        query = ".branch" + String(baseline) + " ul";
-        theBranchUL = document.querySelector(query);
-        var diamond = document.createElement("li");
-        diamond.setAttribute("class", "d"); 
-        diamond.innerHTML = '<div class="diamond"><p class="d-body">'+`${body}`+'</p></div>';
-        if (x!=0) {
-            diamond.style.left=`${x}px`;    
-        }
-        theBranchUL.appendChild(diamond);
-        console.log('process');
-
-        var liLine = document.createElement("li");
-        liLine.setAttribute("class", "half"); 
-        liLine.innerHTML = '<div class="line"></div>';
-        if (x!=0) {
-            liLine.style.left=`${x}px`;    
-        }
-        theBranchUL.appendChild(liLine);
+        return val;
     }
 
     function endFlow(x=0,baseline=ulIdx,status=0) {

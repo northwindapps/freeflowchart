@@ -49,21 +49,21 @@ html,body{
 .diamond{
     width: 0;
     height: 0;
-    border: 90px solid transparent;
-    border-bottom: 60px solid gainsboro;
+    border: 110px solid transparent;
+    border-bottom: 65px solid gainsboro;
     position: relative;
-    top: 0px;
+    top: -25px;
 }
 
 .diamond:after {
 	content: '';
-	position: absolute;
-	left: -90px;
-	top: 60px;
-	width: 0;
-	height: 0;
-	border: 90px solid transparent;
-	border-top: 60px solid gainsboro;
+    position: absolute;
+    left: -110px;
+    top: 65px;
+    width: 0;
+    height: 0;
+    border: 110px solid transparent;
+    border-top: 66px solid gainsboro;
 }
 
 .line{
@@ -74,9 +74,9 @@ html,body{
 
 .process{
     position: relative;
-    height: 100px;
-    top: 150px;
-    width: 180px;
+    height: 140px;
+    top: 80px;
+    width: 220px;
     display: inline-block;
     border: solid 1px gainsboro;
     border-radius: 5px;
@@ -85,20 +85,20 @@ html,body{
 
 .ifel{
     content: '';
-    position: relative;
-    top: 0px;
-    left: 90px;
+    position: absolute;
+    top: -105px;
+    /* left: 422px; */
     border-left: 1px solid gainsboro;
     border-bottom: 1px solid gainsboro;
     width: 185px;
-    height: 200px;
+    height: 250px;
 }
 
 .ifthen{
     content: '';
     position: relative;
-    top: 0px;
-    left: 90px;
+    top: -110px;
+    /* left: 90px; */
     border-left: 1px solid gainsboro;
     border-bottom: 1px solid gainsboro;
     width: 0px;
@@ -147,7 +147,7 @@ html,body{
     width: 0;
     position: absolute;
     height: 0;
-    top: 193px;
+    top: 144px;
     margin-left: -10px;
     border-top: 5px solid transparent;
     border-left: 10px solid gainsboro;
@@ -166,7 +166,8 @@ ul#main{
 
 li{
     top: 25px;
-    width: 180px;
+    width: 220px;
+    height: 320px;
     text-align: center;
     position: relative;
 }
@@ -201,4 +202,8 @@ li.half div {
     z-index: 1;
     width: 150px;
     height: 90px;
+}
+
+.abs{
+    position:absolute;
 }
