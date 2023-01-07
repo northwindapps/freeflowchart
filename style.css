@@ -80,6 +80,7 @@ html,body{
     display: inline-block;
     border: solid 1px gainsboro;
     border-radius: 5px;
+    background-color: white;
 }
 
 .ifel{
@@ -90,6 +91,17 @@ html,body{
     border-left: 1px solid gainsboro;
     border-bottom: 1px solid gainsboro;
     width: 185px;
+    height: 200px;
+}
+
+.ifthen{
+    content: '';
+    position: relative;
+    top: 0px;
+    left: 90px;
+    border-left: 1px solid gainsboro;
+    border-bottom: 1px solid gainsboro;
+    width: 0px;
     height: 200px;
 }
 
@@ -149,6 +161,7 @@ ul{
 
 ul#main{
     display: table;
+    padding: 20px;
 }
 
 li{
