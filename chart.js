@@ -31,7 +31,7 @@ window.addEventListener('DOMContentLoaded', function() {
     //if do you have pasta? <>else <>go to Mcdonalds <>end <>if do you have pasta source? <>then Italian <>end <>else <>go to Chinese Place <>end <><>
 	const values = JSON.parse(sessionStorage.getItem("src"));
 	console.log('welcome back',values);
-    // parseValue(values);
+    parseValue(values);
 
     async function parseValue(ary){
         // tokenList = [];
@@ -48,66 +48,66 @@ window.addEventListener('DOMContentLoaded', function() {
         }
         
         console.log(filtered);
-    
         for (let index = 0; index < filtered.length; index++) {
             console.log(filtered[index]);
-    
             switch (filtered[index]) {
                 case 'if':
-                    await addIfElse(filtered[index+1]);
+                    await addIfelse(x=0,body=filtered[index+1]);
                     filtered[index+1] = '';
                     status = 1;
                     break;
     
-                case 'else':
-                    status = 2;
-                    break;
-                case 'endif':
-                    status = 0;
-                    await endIfElse();
-                    break;
-                case 'endflow':
-                    status = 0;
-                    await endFlow();
-                    break;
+                // case 'else':
+                //     status = 2;
+                //     break;
+                // case 'endif':
+                //     status = 0;
+                //     await endIfElse();
+                //     break;
+                // case 'endflow':
+                //     status = 0;
+                //     await endFlow();
+                //     break;
                 
-                case 'end':
-                    if (status == 2) {
-                        await endProcess2();	
-                    }else if(status == 1){
-                        await endProcess1();
-                    }else{
-                        await endProcess();
-                    }
+                // case 'end':
+                //     if (status == 2) {
+                //         await endProcess2();	
+                //     }else if(status == 1){
+                //         await endProcess1();
+                //     }else{
+                //         await endProcess();
+                //     }
                     
-                    break;
+                //     break;
                 
-                case ' ':
-                    
-                    break;
-                default:
-                    var str = filtered[index].replace(/\s/g, '');
-                    if (str!='') {
-                        if (status == 2) {
-                            if (str == 'none') {
-                                console.log(str);
-                                await addProcess2Empty(filtered[index]);
+                // case ' ':
+                
+                //     break;
+                // default:
+                //     var str = filtered[index].replace(/\s/g, '');
+                //     if (str!='') {
+                //         if (status == 2) {
+                //             if (str == 'none') {
+                //                 console.log(str);
+                //                 await addProcess2Empty(filtered[index]);
     
-                            }else{
-                                await addProcess2(filtered[index]);
-                            }
-                        }else if(status == 1){
-                            if (str == 'none') {
-                                console.log(str);
-                                await addProcess1Empty(filtered[index]);		
-                            }else{
-                                await addProcess1(filtered[index]);
-                            }
+                //             }else{
+                //                 await addProcess2(filtered[index]);
+                //             }
+                //         }else if(status == 1){
+                //             if (str == 'none') {
+                //                 console.log(str);
+                //                 await addProcess1Empty(filtered[index]);		
+                //             }else{
+                //                 await addProcess1(filtered[index]);
+                //             }
                             
-                        }else{
-                            await addProcess(filtered[index]);
-                        }
-                    }
+                //         }else{
+                //             await addProcess(filtered[index]);
+                //         }
+                //     }
+                //     break;
+                default:
                     break;
             }
         }
@@ -156,9 +156,6 @@ window.addEventListener('DOMContentLoaded', function() {
     }
 
     function addBranch(baseUlIdx = 0) {
-        if (!baseUlIdx) {
-            baseUlIdx = ulIdx;
-        }
         var li = document.createElement("li");
         li.setAttribute("class", "branch " + "branch" + baseUlIdx); 
         li.innerHTML = '<ul></ul>';
@@ -188,12 +185,12 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log('process');
     }
 
-    function addIfelse(x=0) {
+    function addIfelse(x=0,body=''){
         var query = ".branch" + String(ulIdx) + " ul";
         var theBranchUL = document.querySelector(query);
 
         if (!theBranchUL){
-            addBranch();
+            addBranch(x = ulIdx);
         }
        
         
@@ -221,9 +218,12 @@ window.addEventListener('DOMContentLoaded', function() {
 
 
         //switch to else part
-        addBranch(ulIdx+1);
         query = ".branch" + String(ulIdx+1) + " ul";
         theBranchUL = document.querySelector(query);
+        if (!theBranchUL){
+            addBranch(x = ulIdx+1);
+            theBranchUL = document.querySelector(query);
+        }
         var li = document.createElement("li");
         li.innerHTML = '<div class="ifel"></div>';
         
@@ -244,7 +244,7 @@ window.addEventListener('DOMContentLoaded', function() {
         theBranchUL = document.querySelector(query);
         var diamond = document.createElement("li");
         diamond.setAttribute("class", "d"); 
-        diamond.innerHTML = '<div class="diamond">hi</div>';
+        diamond.innerHTML = '<div class="diamond"><p class="d-body">'+`${body}`+'</p></div>';
         if (x!=0) {
             diamond.style.left=`${x}px`;    
         }

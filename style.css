@@ -179,3 +179,12 @@ li.half div {
     width: 150px;
     height: 50px;
 }
+
+.d-body{
+    position: absolute;
+    right: -73px;
+    top: 20px;
+    z-index: 1;
+    width: 150px;
+    height: 90px;
+}
