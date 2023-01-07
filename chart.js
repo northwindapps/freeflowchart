@@ -36,7 +36,7 @@ window.addEventListener('DOMContentLoaded', function() {
     async function parseValue(ary){
         // tokenList = [];
         // rwList = [];
-        var statuscode = [0,1,2];//none if ifelse
+        var statuscode = [0,1,2,3];//none if ifelse then
         var status = 0;
         var filtered = [];
         for (let index = 0; index < ary.length; index++) {
@@ -52,11 +52,21 @@ window.addEventListener('DOMContentLoaded', function() {
             console.log(filtered[index]);
             switch (filtered[index]) {
                 case 'if':
-                    await addIfelse(x=0,body=filtered[index+1]);
+                    await addIfelse(x=0,baseline=ulIdx,body=filtered[index+1]);
                     filtered[index+1] = '';
                     status = 1;
                     break;
     
+                case 'then':
+                    //process
+                    status = 3;
+                    if (filtered[index+1]) {
+                        addProcess(x=90,baseline=ulIdx+1,filtered[index+1],status=status);
+                    }
+                    addLine();
+                    status = 1;
+
+                    break;
                 // case 'else':
                 //     status = 2;
                 //     break;
@@ -108,7 +118,11 @@ window.addEventListener('DOMContentLoaded', function() {
                 //     }
                 //     break;
                 default:
-                    await addProcess(x=0,filtered[index]);
+                    //process
+                    if (filtered[index] && status == 0) {
+                        addProcess(x=0,baseline=ulIdx,filtered[index]);
+                    }
+                    
                     break;
             }
         }
@@ -119,10 +133,7 @@ window.addEventListener('DOMContentLoaded', function() {
     
 
 
-    function addProcess() {
-
-        console.log('process');
-    }
+   
 
     function addLane() {
         ulIdx += 1;
@@ -134,9 +145,8 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log(ulIdx);
     }
 
-    function addLine(x=0) {
-        
-        var query = ".branch" + String(ulIdx) + " ul";
+    function addLine(x=0,baseline=ulIdx) {
+        var query = ".branch" + String(baseline) + " ul";
         var theBranchUL = document.querySelector(query);
         var li = document.createElement("li");
         li.innerHTML = '<div class="line"></div>';
@@ -151,8 +161,8 @@ window.addEventListener('DOMContentLoaded', function() {
         if (x!=0) {
             li2.style.left=`${x}px`;    
         }
-        theBranchUL.appendChild(li2);
-        console.log(li2);
+        // theBranchUL.appendChild(li2);
+        // console.log(li2);
          
     }
 
@@ -165,9 +175,9 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log(baseUlIdx);
     }
 
-    function addProcess(x=0,body='') {
+    function addProcess(x=0,baseline=ulIdx,body='',status=0) {
         // var theBranchUL = document.querySelectorAll(".branch"+ ulIdx-1 +" ul");
-        var query = ".branch" + String(ulIdx) + " ul";
+        var query = ".branch" + String(baseline) + " ul";
         var theBranchUL = document.querySelector(query);
         var li = document.createElement("li");
         li.innerHTML = '<p class="process">'+`${body}`+'</p><div class="arrow"></div>';
@@ -175,23 +185,26 @@ window.addEventListener('DOMContentLoaded', function() {
             li.style.left=`${x}px`;    
         }
         theBranchUL.appendChild(li);
-
-        var liLine = document.createElement("li");
-        liLine.setAttribute("class", "half"); 
-        liLine.innerHTML = '<div class="line"></div>';
-        if (x!=0) {
-            liLine.style.left=`${x}px`;    
+    
+        if (status != 3) {
+            var liLine = document.createElement("li");
+            liLine.setAttribute("class", "half"); 
+            liLine.innerHTML = '<div class="line"></div>';
+            if (x!=0) {
+                liLine.style.left=`${x}px`;    
+            }
+            theBranchUL.appendChild(liLine);    
         }
-        theBranchUL.appendChild(liLine);
+        
         console.log('process');
     }
 
-    function addIfelse(x=0,body=''){
-        var query = ".branch" + String(ulIdx) + " ul";
+    function addIfelse(x=0,baseline = ulIdx, body=''){
+        var query = ".branch" + String(baseline) + " ul";
         var theBranchUL = document.querySelector(query);
 
         if (!theBranchUL){
-            addBranch(x = ulIdx);
+            addBranch(x = baseline);
         }
        
         
