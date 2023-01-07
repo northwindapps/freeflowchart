@@ -61,7 +61,9 @@ window.addEventListener('DOMContentLoaded', function() {
                     //process
                     status = 3;
                     if (filtered[index+1]) {
-                        addProcess(x=90,baseline=ulIdx+1,filtered[index+1],status=status);
+                        var query = ".branch" + String(ulIdx) + " .d";
+                        allDiamonds = document.querySelectorAll(query);
+                        addProcess(x=90*allDiamonds.length,baseline=ulIdx+1,filtered[index+1],status=status);
                     }
                     addLine();
                     status = 1;
@@ -209,33 +211,33 @@ window.addEventListener('DOMContentLoaded', function() {
        
         
         //TODO calculate ifel left px 
-        var query2 = ".branch" + String(ulIdx) + " .half";
+        var query2 = ".branch" + String(baseline) + " .half";
         liHalfs = document.querySelectorAll(query2);
         console.log(liHalfs);
-        var query3 = ".branch" + String(ulIdx) + " .process";
+        var query3 = ".branch" + String(baseline) + " .process";
         plis = document.querySelectorAll(query3);
-        var query4 = ".branch" + String(ulIdx) + " .d";
+        var query4 = ".branch" + String(baseline) + " .d";
         allDiamonds = document.querySelectorAll(query4);
         console.log(allDiamonds);
 
-        var query5 = ".branch" + String(ulIdx) + " .line";
+        var query5 = ".branch" + String(baseline) + " .line";
         lis = document.querySelectorAll(query5);
 
         var val = 0.0;
 
-        val = 180.0 * plis.length;
-        val += 90.0 * liHalfs.length;
-        val += 180.0 * (lis.length - liHalfs.length); 
+        // val = 180.0 * plis.length;
+        // val += 90.0 * liHalfs.length;
+        // val += 180.0 * (lis.length - liHalfs.length); 
         console.log(plis.length);
         console.log(liHalfs.length);
         console.log(val);
 
 
         //switch to else part
-        query = ".branch" + String(ulIdx+1) + " ul";
+        query = ".branch" + String(baseline+1) + " ul";
         theBranchUL = document.querySelector(query);
         if (!theBranchUL){
-            addBranch(x = ulIdx+1);
+            addBranch(x = baseline+1);
             theBranchUL = document.querySelector(query);
         }
         var li = document.createElement("li");
@@ -249,12 +251,14 @@ window.addEventListener('DOMContentLoaded', function() {
             console.log(val);
             li.style.left=`${x+val}px`;    
         }
+        val = allDiamonds.length * 90.0;
+        li.style.left=`${val}px`; 
         theBranchUL.appendChild(li);
 
        
 
         //back to if part
-        query = ".branch" + String(ulIdx) + " ul";
+        query = ".branch" + String(baseline) + " ul";
         theBranchUL = document.querySelector(query);
         var diamond = document.createElement("li");
         diamond.setAttribute("class", "d"); 
