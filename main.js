@@ -32,46 +32,46 @@ function getValue(data){
         if (reservedWordsList.includes(token.replace('<>','').replace(' ',''))) {
             
             // token = token.replace(/\s/g, '').replace('<>','');
-        
+            newtoken = token.replace('<>','').replace(' ','');
             //TODO
-            if (token == 'if') {
+            if (newtoken == 'if') {
                 //regular expression if there is an  else after an if?
-                tokenList.push(token);
-                rwList.push(token);
+                tokenList.push(newtoken);
+                rwList.push(newtoken);
                 token ='';
             }
 
-            if (token == 'else') {
+            if (newtoken == 'else') {
                 //regular expression if there is an  else after an if?
-                tokenList.push(token);
-                rwList.push(token);
+                tokenList.push(newtoken);
+                rwList.push(newtoken);
                 token ='';
             }
 
-            if (token == 'endif') {
+            if (newtoken == 'endif') {
                 //regular expression if there is an  else after an if?
-                tokenList.push(token);
+                tokenList.push(newtoken);
                 token ='';
             }
 
-            if (token == 'endflow') {
-                tokenList.push(token);
+            if (newtoken == 'endflow') {
+                tokenList.push(newtoken);
                 token='';
             }
 
-            if (token == 'endprocess') {
+            if (newtoken == 'endprocess') {
                 //regular expression if there is an  else after an if?
                 tokenList.push('end');
                 token ='';
             }
 
-            if (token == 'then'){
-                tokenList.push(token);
+            if (newtoken == 'then'){
+                tokenList.push(newtoken);
                 token = '';
            }
 
-           if (token == 'none'){
-                tokenList.push(token);
+           if (newtoken == 'none'){
+                tokenList.push(newtoken);
                 token = '';
            }
 

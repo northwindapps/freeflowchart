@@ -26,7 +26,7 @@ window.addEventListener('DOMContentLoaded', function() {
     //
     var ta = null;
     var str = '';
-    var reservedWordsList = ['if','else','endif','end','process','process2','<>', ' '];
+    var reservedWordsList = ['if','else','endif','end','process','process2','<>','endflow','then', ' '];
     var srcAry = ['if', 'do you have pasta? ','italian','endif','if', 'do you have rice?', 'Chinese', 'endif', 'if', 'beans', 'English', 'endif','', '  ', 'if', '  do you have pasta source?', 'then Italian ', 'else', '  ', 'go to Chinese Place ', 'end', 'if', 'you are a vegitalian', 'arabiata is a choice for you','none','none','none','else','you like meat source','none','none','none','endif','done','endflow'];
     //if do you have pasta? <>else <>go to Mcdonalds <>end <>if do you have pasta source? <>then Italian <>end <>else <>go to Chinese Place <>end <><>
 	const values = JSON.parse(sessionStorage.getItem("src"));
@@ -39,15 +39,19 @@ window.addEventListener('DOMContentLoaded', function() {
         var statuscode = [0,1,2,3];//none if ifelse then
         var status = 0;
         var filtered = [];
+        var reserved = [];
         for (let index = 0; index < ary.length; index++) {
             var str = ary[index].replace(/\s/g, '');
-                    if (str!='') {
-    
-                        filtered.push(ary[index]);
-                    }
+            if (str!='') {
+                filtered.push(ary[index]);
+                if (reservedWordsList.includes(ary[index].replace('<>','').replace(' ',''))) {
+                    reserved.push(ary[index].replace('<>','').replace(' ',''));
+                }
+            }
         }
         
         console.log(filtered);
+        console.log(reserved);
         for (let index = 0; index < filtered.length; index++) {
             console.log(filtered[index]);
             switch (filtered[index]) {
