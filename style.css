@@ -133,9 +133,9 @@ html,body{
 
 .arrow{
     width: 0;
-    position: relative;
+    position: absolute;
     height: 0;
-    top: 44px;
+    top: 144px;
     margin-left: -10px;
     border-top: 5px solid transparent;
     border-left: 10px solid gainsboro;

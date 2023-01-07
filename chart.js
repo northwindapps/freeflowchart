@@ -108,6 +108,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 //     }
                 //     break;
                 default:
+                    await addProcess(x=0,filtered[index]);
                     break;
             }
         }
@@ -164,12 +165,12 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log(baseUlIdx);
     }
 
-    function addProcess(x=0) {
+    function addProcess(x=0,body='') {
         // var theBranchUL = document.querySelectorAll(".branch"+ ulIdx-1 +" ul");
         var query = ".branch" + String(ulIdx) + " ul";
         var theBranchUL = document.querySelector(query);
         var li = document.createElement("li");
-        li.innerHTML = '<p class="process">how</p><div class="arrow"></div>';
+        li.innerHTML = '<p class="process">'+`${body}`+'</p><div class="arrow"></div>';
         if (x!=0) {
             li.style.left=`${x}px`;    
         }
