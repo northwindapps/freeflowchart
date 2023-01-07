@@ -29,10 +29,11 @@ function getValue(data){
         // console.log(str);
         //todo if special symbols[,{} ()]
 
-        if (reservedWordsList.includes(token.replace('<>','').replace(' ',''))) {
-            
-            // token = token.replace(/\s/g, '').replace('<>','');
-            newtoken = token.replace('<>','').replace(' ','');
+        if (reservedWordsList.includes(token.replace('<>','').replace(/\s+/g,''))) {
+            newtoken = token.replace(/\s/g, '').replace('<>','');
+            // newtoken = token.replace('<>','').replace(/\s+/g,'X');
+
+            console.log(newtoken);
             //TODO
             if (newtoken == 'if') {
                 //regular expression if there is an  else after an if?
