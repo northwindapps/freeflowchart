@@ -406,7 +406,7 @@ window.addEventListener('DOMContentLoaded', function() {
          theBranchUL = document.querySelector(query);
          var diamond = document.createElement("li");
          diamond.setAttribute("class", "d"); 
-         diamond.innerHTML = '<div class="diamond"><p class="d-body">'+`${body}`+'</p></div><span class="y">yes</span><span class="n">no</span>';
+         diamond.innerHTML = '<div class="diamond"><p class="d-body">'+`${body}`+'</p></div><span class="n">yes</span>';
          if (x!=0) {
             //  diamond.style.left=`${x}px`;    
          }
