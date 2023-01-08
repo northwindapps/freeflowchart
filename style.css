@@ -218,3 +218,15 @@ li.half div {
 .abs{
     position:absolute;
 }
+
+.y{
+    position: absolute;
+    right: -32px;
+    top: 116px;
+}
+
+.n{
+    position: absolute;
+    right: 65px;
+    bottom: 75px;
+}

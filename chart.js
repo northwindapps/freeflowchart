@@ -268,10 +268,6 @@ window.addEventListener('DOMContentLoaded', function() {
 
             var query5 = ".branch" + String(baseline) + " .line";
             lis = document.querySelectorAll(query5);
-            // if (x!=0) {
-            //     x -= 90;
-            //     li.style.left=`${x}px`;    
-            // }
             var val = plis.length * 220.0 + allDiamonds.length * 220.0 + liHalfs.length * 110.0 - 220.0 - 110.0; 
             li.style.left=`${val}px`;
             absElseLane = val + 220.0 + 110.0;    
@@ -359,9 +355,6 @@ window.addEventListener('DOMContentLoaded', function() {
 
         var val = plis.length * 220.0 + liHalfs.length * 110.0 + allDiamonds.length * 220.0 + 110.0;
 
-        // val = 180.0 * plis.length;
-        // val += 110.0 * liHalfs.length;
-        // val += 180.0 * (lis.length - liHalfs.length); 
         console.log(plis.length);
         console.log(liHalfs.length);
         console.log(val);
@@ -389,19 +382,13 @@ window.addEventListener('DOMContentLoaded', function() {
         theBranchUL = document.querySelector(query);
         var diamond = document.createElement("li");
         diamond.setAttribute("class", "d"); 
-        diamond.innerHTML = '<div class="diamond"><p class="d-body">'+`${body}`+'</p></div>';
-        if (x!=0) {
-            // diamond.style.left=`${x}px`;    
-        }
+        diamond.innerHTML = '<div class="diamond"><p class="d-body">'+`${body}`+'</p></div><span class="y">yes</span><span class="n">no</span>';
         theBranchUL.appendChild(diamond);
         console.log('process');
 
         var liLine = document.createElement("li");
         liLine.setAttribute("class", "half"); 
         liLine.innerHTML = '<div class="line"></div>';
-        if (x!=0) {
-            // liLine.style.left=`${x}px`;    
-        }
         theBranchUL.appendChild(liLine);
     }
 
@@ -419,7 +406,7 @@ window.addEventListener('DOMContentLoaded', function() {
          theBranchUL = document.querySelector(query);
          var diamond = document.createElement("li");
          diamond.setAttribute("class", "d"); 
-         diamond.innerHTML = '<div class="diamond"><p class="d-body">'+`${body}`+'</p></div>';
+         diamond.innerHTML = '<div class="diamond"><p class="d-body">'+`${body}`+'</p></div><span class="y">yes</span><span class="n">no</span>';
          if (x!=0) {
             //  diamond.style.left=`${x}px`;    
          }
