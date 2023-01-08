@@ -202,6 +202,7 @@ window.addEventListener('DOMContentLoaded', function() {
         li2.setAttribute("class", "half");
         li2.innerHTML = '<div class="line"></div>';
         if (absElseLane && status == 2) {
+            li2.setAttribute("class", "half abs");
             li2.style.left=`${absElseLane}px`;    
         }
         theBranchUL.appendChild(li2);
@@ -249,6 +250,7 @@ window.addEventListener('DOMContentLoaded', function() {
             }
             theBranchUL.appendChild(liLine);  
         }else if(status == 2){
+            //else part
             console.log("222?");
             baseline -= 1;
             var li = document.createElement("li");
@@ -272,9 +274,16 @@ window.addEventListener('DOMContentLoaded', function() {
             // }
             var val = plis.length * 220.0 + allDiamonds.length * 220.0 + liHalfs.length * 110.0 - 220.0 - 110.0; 
             li.style.left=`${val}px`;
-            absElseLane = val + 220.0;    
+            absElseLane = val + 220.0 + 110.0;    
             theBranchUL.appendChild(li);
+
+            var liLine = document.createElement("li");
+            liLine.setAttribute("class", "half abs"); 
+            liLine.innerHTML = '<div class="line"></div>';
+            liLine.style.left=`${val + 220.0}px`;
+            theBranchUL.appendChild(liLine);  
         }else if(status == 3){
+            //then part
             baseline -= 1;
             var li = document.createElement("li");
             li.setAttribute("class", "abs"); 
