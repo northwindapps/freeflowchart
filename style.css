@@ -21,7 +21,7 @@ html,body{
 }
 
 .foo{
-    background-color: gray;
+    background-color: white;
     display: block;
     position: sticky;
     height: 30px;

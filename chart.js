@@ -1,24 +1,24 @@
 window.addEventListener('DOMContentLoaded', function() {
     console.log('DOM is loaded')
 
-    var addProcessBtn = document.querySelector('#addprocess');
-    var addBranchBtn = document.querySelector('#addbranch');
-    var addIfelseBtn = document.querySelector('#addif');
-    var addLineBtn = document.querySelector('#addline');
-    var addLaneBtn = document.querySelector('#addlane');
-    var substractLaneBtn = document.querySelector('#substractlane');
+    // var addProcessBtn = document.querySelector('#addprocess');
+    // var addBranchBtn = document.querySelector('#addbranch');
+    // var addIfelseBtn = document.querySelector('#addif');
+    // var addLineBtn = document.querySelector('#addline');
+    // var addLaneBtn = document.querySelector('#addlane');
+    // var substractLaneBtn = document.querySelector('#substractlane');
     var mainUL = document.querySelector('#main');
     var ulIdx = 0;
     
-    addProcessBtn.addEventListener("click", ()=>{ addProcess();});
-    addLineBtn.addEventListener("click", ()=>{ addLine();});
-    addLaneBtn.addEventListener("click", ()=>{ addLane();});
-    substractLaneBtn.addEventListener("click", ()=>{ substractLane();});
-    addBranchBtn.addEventListener("click", ()=>{
-        addBranch();
-    });
+    // addProcessBtn.addEventListener("click", ()=>{ addProcess();});
+    // addLineBtn.addEventListener("click", ()=>{ addLine();});
+    // addLaneBtn.addEventListener("click", ()=>{ addLane();});
+    // substractLaneBtn.addEventListener("click", ()=>{ substractLane();});
+    // addBranchBtn.addEventListener("click", ()=>{
+    //     addBranch();
+    // });
     // addIfelseBtn.addEventListener("click", ()=>{ addIfelse(x=90);});
-    addIfelseBtn.addEventListener("click", ()=>{ addIfelse(x=0);});
+    // addIfelseBtn.addEventListener("click", ()=>{ addIfelse(x=0);});
 
 
 
