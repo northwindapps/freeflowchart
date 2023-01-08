@@ -41,7 +41,6 @@ window.addEventListener('DOMContentLoaded', function() {
         var filtered = [];
         var reserved = [];
         var absIfLane = 0.0;
-        var absElseLane = 0.0;
         for (let index = 0; index < ary.length; index++) {
             var str = ary[index].replace(/\s/g, '');
             if (str!='') {
@@ -109,10 +108,9 @@ window.addEventListener('DOMContentLoaded', function() {
                     if (status == 2) {
                         addLine(status=0);
                         addLine(x=0,baseline=ulIdx+1,status = 2);
-                        addLine(x=0,baseline=ulIdx+1,status = 2);
+                        // addLine(x=0,baseline=ulIdx+1,status = 2);
                         endIfel();
                         addLine(status=0);
-                        absElseLane = null;  
                     }
                     
                     status = 0;
@@ -201,9 +199,19 @@ window.addEventListener('DOMContentLoaded', function() {
         var li2 = document.createElement("li");
         li2.setAttribute("class", "half");
         li2.innerHTML = '<div class="line"></div>';
-        if (absElseLane && status == 2) {
+        if (status == 2) {
             li2.setAttribute("class", "half abs");
-            li2.style.left=`${absElseLane}px`;    
+            var query0 = ".branch" + String(baseline) + " ul";
+            var elses = document.querySelector(query0);
+            var last = elses;
+            console.log('test');
+            console.log(last.lastChild.style.left);
+            console.log(last.lastChild.offsetWidth);
+
+            var parsedWidth = parseInt(last.lastChild.offsetWidth);
+            var str = (last.lastChild.style.left).replace('px','');
+            var parsed = parseInt(str);
+            li2.style.left = `${parsed + parsedWidth}px`;   
         }
         theBranchUL.appendChild(li2);
         // console.log(li2);
@@ -252,31 +260,33 @@ window.addEventListener('DOMContentLoaded', function() {
         }else if(status == 2){
             //else part
             console.log("222?");
-            baseline -= 1;
+        
             var li = document.createElement("li");
             li.setAttribute("class", "abs"); 
             li.innerHTML = '<p class="process">'+`${body}`+'</p><div class="arrow"></div>';
 
-            var query2 = ".branch" + String(baseline) + " .half";
-            liHalfs = document.querySelectorAll(query2);
-            console.log(liHalfs);
-            var query3 = ".branch" + String(baseline) + " .process";
-            plis = document.querySelectorAll(query3);
-            var query4 = ".branch" + String(baseline) + " .d";
-            allDiamonds = document.querySelectorAll(query4);
-            console.log(allDiamonds);
+         
 
-            var query5 = ".branch" + String(baseline) + " .line";
-            lis = document.querySelectorAll(query5);
-            var val = plis.length * 220.0 + allDiamonds.length * 220.0 + liHalfs.length * 110.0 - 220.0 - 110.0; 
-            li.style.left=`${val}px`;
-            absElseLane = val + 220.0 + 110.0;    
+            var query0 = ".branch" + String(baseline) + " ul";
+            var elses = document.querySelector(query0);
+            var last = elses;
+            console.log('test');
+            console.log(last.lastChild.style.left);
+            console.log(last.lastChild.offsetWidth);
+
+            var parsedWidth = parseInt(last.lastChild.offsetWidth);
+            var str = (last.lastChild.style.left).replace('px','');
+            var parsed = parseInt(str);
+            li.style.left = `${parsed + parsedWidth}px`; 
             theBranchUL.appendChild(li);
+
+           
 
             var liLine = document.createElement("li");
             liLine.setAttribute("class", "half abs"); 
             liLine.innerHTML = '<div class="line"></div>';
-            liLine.style.left=`${val + 220.0}px`;
+
+            liLine.style.left = `${parsed + parsedWidth + 220.0}px`;
             theBranchUL.appendChild(liLine);  
         }else if(status == 3){
             //then part
