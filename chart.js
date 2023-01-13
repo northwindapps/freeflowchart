@@ -149,7 +149,7 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log(ulIdx);
     }
 
-    function addLine(x=0,baseline=h,status=0) {
+    function addLine(x=0,baseline=ulIdx,status=0) {
         var query = ".branch" + String(baseline) + " ul";
         var theBranchUL = document.querySelector(query);
        
@@ -276,7 +276,7 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log('process');
     }
 
-    function endIfel(x=0,baseline=h,body='',status=0) {
+    function endIfel(x=0,baseline=ulIdx,body='',status=0) {
         // var theBranchUL = document.querySelectorAll(".branch"+ ulIdx-1 +" ul");
         var query = ".branch" + String(baseline) + " ul";
         var theBranchUL = document.querySelector(query);
