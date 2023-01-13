@@ -53,92 +53,136 @@ window.addEventListener('DOMContentLoaded', function() {
         
         console.log(filtered);
         var lanes = checkTotalLanes(filtered);
-        var finalLane = lanes -1;
         console.log(lanes);
-        for (let h = 0; h < finalLane; h++) {
-            for (let index = 0; index < filtered.length; index++) {
-                console.log(filtered[index]);
-                switch (filtered[index]) {
-                    case 'if':
-                        var index2 = index+1;
-                        var nextIsThen = false;
-                        while(index2<filtered.length){
-                            if (filtered[index2] == 'then') {
-                                nextIsThen = true;
-                                break;
-                            }
-                            if (filtered[index2] == 'else') {
-                                nextIsThen = false;
-                                break;
-                            }
-                            index2+=1;
+        for (let index = 0; index < filtered.length; index++) {
+            console.log(filtered[index]);
+            switch (filtered[index]) {
+                case 'if':
+                    var index2 = index+1;
+                    var nextIsThen = false;
+                    while(index2<filtered.length){
+                        if (filtered[index2] == 'then') {
+                            nextIsThen = true;
+                            break;
                         }
-                        if (nextIsThen) {
-                            await addIfthen(x=0,baseline=h,body=filtered[index+1]);
-                        }else{
-                            await addIfelse(x=0,baseline=h,body=filtered[index+1]);
+                        if (filtered[index2] == 'else') {
+                            nextIsThen = false;
+                            break;
                         }
-                        filtered[index+1] = '';
-                        status = 1;
-                        break;
-        
-                    case 'then':
-                        //process
-                        status = 3;
-                        if (filtered[index+1]) {
-                            var query = ".branch" + String(ulIdx) + " .d";
-                            allDiamonds = document.querySelectorAll(query);
-                            addProcess(x=0,baseline=h+1,filtered[index+1],status=status);
-                        }
-                        // addLine();
-                        filtered[index+1] = '';
-                        status = 1;
+                        index2+=1;
+                    }
+                    if (nextIsThen) {
+                        await addIfthen(x=0,baseline=ulIdx,body=filtered[index+1]);
+                    }else{
+                        await addIfelse(x=0,baseline=ulIdx,body=filtered[index+1]);
+                    }
+                    filtered[index+1] = '';
+                    status = 1;
+                    break;
+    
+                case 'then':
+                    //process
+                    status = 3;
+                    if (filtered[index+1]) {
+                        var query = ".branch" + String(ulIdx) + " .d";
+                        allDiamonds = document.querySelectorAll(query);
+                        addProcess(x=0,baseline=ulIdx+1,filtered[index+1],status=status);
+                    }
+                    // addLine();
+                    filtered[index+1] = '';
+                    status = 1;
 
-                        break;
-                    case 'else':
-                        status = 2;
-                        console.log('status2?');
-                        console.log(filtered[index+1]);
-                        break;
-                    // case 'endif':
-                    //     status = 0;
-                    //     await endIfElse();
-                    //     break;
-                    case 'endflow':
-                        status = 0;
-                        await endFlow();
-                        break;
-                    case 'endif':
-                        if (status == 2) {
-                            addLine(status=0);
-                            addLine(x=0,baseline=h+1,status = 2);
-                            // addLine(x=0,baseline=h+1,status = 2);
-                            endIfel();
-                            addLine(status=0);
-                        }
-                        
-                        status = 0;
-                        break;    
-                    default:
-                        //process
-                        if (filtered[index] && status == 0) {
-                            addProcess(x=0,baseline=h,filtered[index],status=0);
-                        }
-
-                        if (filtered[index] && status == 1) {
-                            addProcess(x=0,baseline=h,filtered[index],status=1);
-                        }
-
-                        if (filtered[index] && status == 2) {
+                    break;
+                case 'else':
+                    status = 2;
+                    console.log('status2?');
+                    console.log(filtered[index+1]);
+                    break;
+                // case 'endif':
+                //     status = 0;
+                //     await endIfElse();
+                //     break;
+                case 'endflow':
+                    status = 0;
+                    await endFlow();
+                    break;
+                case 'endif':
+                    if (status == 2) {
+                        addLine(status=0);
+                        addLine(x=0,baseline=ulIdx+1,status = 2);
+                        // addLine(x=0,baseline=ulIdx+1,status = 2);
+                        endIfel();
+                        addLine(status=0);
+                    }
+                    
+                    status = 0;
+                    break;    
+                
+                // case 'end':
+                //     if (status == 2) {
+                //         await endProcess2();	
+                //     }else if(status == 1){
+                //         await endProcess1();
+                //     }else{
+                //         await endProcess();
+                //     }
+                    
+                //     break;
+                
+                // case ' ':
+                
+                //     break;
+                // default:
+                //     var str = filtered[index].replace(/\s/g, '');
+                //     if (str!='') {
+                //         if (status == 2) {
+                //             if (str == 'none') {
+                //                 console.log(str);
+                //                 await addProcess2Empty(filtered[index]);
+    
+                //             }else{
+                //                 await addProcess2(filtered[index]);
+                //             }
+                //         }else if(status == 1){
+                //             if (str == 'none') {
+                //                 console.log(str);
+                //                 await addProcess1Empty(filtered[index]);		
+                //             }else{
+                //                 await addProcess1(filtered[index]);
+                //             }
                             
-                            addProcess(x=0,baseline=h+1,filtered[index],status=2);
-                        }               
-                        break;
-                }
+                //         }else{
+                //             await addProcess(filtered[index]);
+                //         }
+                //     }
+                //     break"
+                default:
+                    //process
+                    if (filtered[index] && status == 0) {
+                        addProcess(x=0,baseline=ulIdx,filtered[index],status=0);
+                    }
+
+                    if (filtered[index] && status == 1) {
+                        addProcess(x=0,baseline=ulIdx,filtered[index],status=1);
+                    }
+
+                    if (filtered[index] && status == 2) {
+                        
+                        addProcess(x=0,baseline=ulIdx+1,filtered[index],status=2);
+                    }
+                    
+                    break;
             }
-        }    
+        }
+    
+        
     }
     
+    
+
+
+   
+
     function addLane() {
         ulIdx += 1;
         console.log(ulIdx);
@@ -149,7 +193,7 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log(ulIdx);
     }
 
-    function addLine(x=0,baseline=h,status=0) {
+    function addLine(x=0,baseline=ulIdx,status=0) {
         var query = ".branch" + String(baseline) + " ul";
         var theBranchUL = document.querySelector(query);
        
@@ -185,7 +229,7 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log(baseUlIdx);
     }
 
-    function addProcess(x=0,baseline=h,body='',status=0) {
+    function addProcess(x=0,baseline=ulIdx,body='',status=0) {
         // var theBranchUL = document.querySelectorAll(".branch"+ ulIdx-1 +" ul");
         var query = ".branch" + String(baseline) + " ul";
         var theBranchUL = document.querySelector(query);
@@ -276,7 +320,7 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log('process');
     }
 
-    function endIfel(x=0,baseline=h,body='',status=0) {
+    function endIfel(x=0,baseline=ulIdx,body='',status=0) {
         // var theBranchUL = document.querySelectorAll(".branch"+ ulIdx-1 +" ul");
         var query = ".branch" + String(baseline) + " ul";
         var theBranchUL = document.querySelector(query);
@@ -338,8 +382,12 @@ window.addEventListener('DOMContentLoaded', function() {
         var li = document.createElement("li");
         li.setAttribute("class", "abs"); 
         li.innerHTML = '<div class="ifel"></div>';
+        
+      
         li.style.left=`${val}px`; 
         theBranchUL.appendChild(li);
+
+       
 
         //back to if part
         query = ".branch" + String(baseline) + " ul";
