@@ -26,6 +26,7 @@ window.addEventListener('DOMContentLoaded', function() {
     //
     var ta = null;
     var str = '';
+    var elementLaneInfo = [];
     var reservedWordsList = ['if','else','endif','end','process','process2','<>','endflow','then', ' '];
     var srcAry = ['if', 'do you have pasta? ','italian','endif','if', 'do you have rice?', 'Chinese', 'endif', 'if', 'beans', 'English', 'endif','', '  ', 'if', '  do you have pasta source?', 'then Italian ', 'else', '  ', 'go to Chinese Place ', 'end', 'if', 'you are a vegitalian', 'arabiata is a choice for you','none','none','none','else','you like meat source','none','none','none','endif','done','endflow'];
     //if do you have pasta? <>else <>go to Mcdonalds <>end <>if do you have pasta source? <>then Italian <>end <>else <>go to Chinese Place <>end <><>
@@ -40,7 +41,7 @@ window.addEventListener('DOMContentLoaded', function() {
         var status = 0;
         var filtered = [];
         var reserved = [];
-        var absIfLane = 0.0;
+        var currentLane = 0;
         for (let index = 0; index < ary.length; index++) {
             var str = ary[index].replace(/\s/g, '');
             if (str!='') {
@@ -53,89 +54,107 @@ window.addEventListener('DOMContentLoaded', function() {
         
         console.log(filtered);
         var lanes = checkTotalLanes(filtered);
-        var finalLane = lanes -1;
+        var finalLane = lanes;
         console.log(lanes);
-        for (let h = 0; h < finalLane; h++) {
+        console.log(elementLaneInfo);
+        // for (let h = 0; h < finalLane; h++) {
             for (let index = 0; index < filtered.length; index++) {
                 console.log(filtered[index]);
+       
+                    
                 switch (filtered[index]) {
                     case 'if':
-                        var index2 = index+1;
-                        var nextIsThen = false;
-                        while(index2<filtered.length){
-                            if (filtered[index2] == 'then') {
-                                nextIsThen = true;
-                                break;
+                        // if (elementLaneInfo[index] == h) {
+                            var index2 = index+1;
+                            var nextIsThen = false;
+                            while(index2<filtered.length){
+                                if (filtered[index2] == 'then') {
+                                    nextIsThen = true;
+                                    break;
+                                }
+                                if (filtered[index2] == 'else') {
+                                    nextIsThen = false;
+                                    break;
+                                }
+                                index2+=1;
                             }
-                            if (filtered[index2] == 'else') {
-                                nextIsThen = false;
-                                break;
+                            if (nextIsThen) {
+                                await addIfthen(x=0,baseline=elementLaneInfo[index],body=filtered[index+1]);
+                            }else{
+                                await addIfelse(x=0,baseline=elementLaneInfo[index],body=filtered[index+1]);
                             }
-                            index2+=1;
-                        }
-                        if (nextIsThen) {
-                            await addIfthen(x=0,baseline=h,body=filtered[index+1]);
-                        }else{
-                            await addIfelse(x=0,baseline=h,body=filtered[index+1]);
-                        }
-                        filtered[index+1] = '';
-                        status = 1;
+                            filtered[index+1] = '';
+                            status = 1;
+                        // }
                         break;
         
                     case 'then':
-                        //process
-                        status = 3;
-                        if (filtered[index+1]) {
-                            var query = ".branch" + String(ulIdx) + " .d";
-                            allDiamonds = document.querySelectorAll(query);
-                            addProcess(x=0,baseline=h+1,filtered[index+1],status=status);
-                        }
-                        // addLine();
-                        filtered[index+1] = '';
-                        status = 1;
-
+                        // if (elementLaneInfo[index] == h+1) {
+                            //process
+                            status = 3;
+                            if (filtered[index+1]) {
+                                var query = ".branch" + String(ulIdx) + " .d";
+                                allDiamonds = document.querySelectorAll(query);
+                                addProcess(x=0,baseline=elementLaneInfo[index],filtered[index+1],status=status);
+                            }
+                            // addLine();
+                            filtered[index+1] = '';
+                            status = 1;
+                        // }
                         break;
                     case 'else':
-                        status = 2;
-                        console.log('status2?');
-                        console.log(filtered[index+1]);
+                        // if (elementLaneInfo[index] == h) {
+                            status = 2;
+                            console.log('status2?');
+                            console.log(filtered[index+1]);
+                        // }
                         break;
                     // case 'endif':
                     //     status = 0;
                     //     await endIfElse();
                     //     break;
                     case 'endflow':
-                        status = 0;
-                        await endFlow();
+                        // if (elementLaneInfo[index] == h) {
+                            status = 0;
+                            await endFlow();
+                        // }
                         break;
                     case 'endif':
-                        if (status == 2) {
-                            addLine(status=0);
-                            addLine(x=0,baseline=h+1,status = 2);
-                            // addLine(x=0,baseline=h+1,status = 2);
-                            endIfel();
-                            addLine(status=0);
-                        }
-                        
-                        status = 0;
+                        // if (elementLaneInfo[index] == h) {
+                            if (status == 2) {
+                                //iflane 
+                                addLine(status=0);
+                                console.log("endifel");
+                                addLine(x=0,baseline=elementLaneInfo[index]+1,status = 2);
+                                endIfel();
+                                addLine(status=0);
+                            }   
+                            status = 0;
+                        // }
                         break;    
                     default:
                         //process
                         if (filtered[index] && status == 0) {
-                            addProcess(x=0,baseline=h,filtered[index],status=0);
+                            // if (elementLaneInfo[index] == h) {
+                                addProcess(x=0,baseline=elementLaneInfo[index],filtered[index],status=0);
+                            // }
                         }
 
                         if (filtered[index] && status == 1) {
-                            addProcess(x=0,baseline=h,filtered[index],status=1);
+                            // if (elementLaneInfo[index] == h) {
+                                addProcess(x=0,baseline=elementLaneInfo[index],filtered[index],status=1);
+                            // }
                         }
 
                         if (filtered[index] && status == 2) {
-                            
-                            addProcess(x=0,baseline=h+1,filtered[index],status=2);
+                            // if (elementLaneInfo[index] == h+1) {
+                                addProcess(x=0,baseline=elementLaneInfo[index],filtered[index],status=2);
+                            // }
                         }               
                         break;
-                }
+                
             }
+            // }
         }    
     }
     
@@ -149,7 +168,7 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log(ulIdx);
     }
 
-    function addLine(x=0,baseline=ulIdx,status=0) {
+    function addLine(x=0,baseline=0,status=0) {
         var query = ".branch" + String(baseline) + " ul";
         var theBranchUL = document.querySelector(query);
        
@@ -163,6 +182,7 @@ window.addEventListener('DOMContentLoaded', function() {
             var elses = document.querySelector(query0);
             var last = elses;
             console.log('test');
+            console.log(query0);
             console.log(last.lastChild.style.left);
             console.log(last.lastChild.offsetWidth);
 
@@ -229,6 +249,7 @@ window.addEventListener('DOMContentLoaded', function() {
             var elses = document.querySelector(query0);
             var last = elses;
             console.log('test');
+            console.log(query0);
             console.log(last.lastChild.style.left);
             console.log(last.lastChild.offsetWidth);
 
@@ -294,6 +315,8 @@ window.addEventListener('DOMContentLoaded', function() {
             li.innerHTML = '<div class="rect"></div><div class="circle"></div>';   
             theBranchUL.appendChild(li);
         
+            //
+            
         console.log('process');
     }
 
@@ -476,6 +499,11 @@ window.addEventListener('DOMContentLoaded', function() {
                 default:
                     break;
             }
+            var elementlane = lane - 1;
+            if (elementlane < 0) {
+                elementlane = 0;
+            }
+            elementLaneInfo.push(elementlane);
         }
         return maxLane;
     }
