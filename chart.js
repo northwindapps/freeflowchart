@@ -202,7 +202,7 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log(baseUlIdx);
     }
 
-    function addProcess(x=0,baseline=h,body='',status=0) {
+    function addProcess(x=0,baseline=0,body='',status=0) {
         // var theBranchUL = document.querySelectorAll(".branch"+ ulIdx-1 +" ul");
         var query = ".branch" + String(baseline) + " ul";
         var theBranchUL = document.querySelector(query);
@@ -212,26 +212,56 @@ window.addEventListener('DOMContentLoaded', function() {
             theBranchUL = document.querySelector(query);
             isFirstElment = true;
         }
-        console.log("222?");
-        console.log(status);
+        
         if (status == 0 || status == 1) {
+            console.log(baseline);
+            console.log(status);
+            console.log(body);
             var li = document.createElement("li");
-            if (isFirstElment) {
-                li.innerHTML = '<p class="process">'+`${body}`+'</p>';
+            if (baseline > 0) {
+                if (isFirstElment) {
+                    li.setAttribute("class", "abs"); 
+                    li.innerHTML = '<p class="process">'+`${body}`+'</p>';
+                }else{
+                    li.setAttribute("class", "abs"); 
+                    li.innerHTML = '<p class="process">'+`${body}`+'</p><div class="arrow"></div>';
+                }
+
+                var query0 = ".branch" + String(baseline) + " ul";
+                var elses = document.querySelector(query0);
+                var last = elses;
+                console.log('test');
+                console.log(query0);
+                console.log(last.lastChild.style.left);
+                console.log(last.lastChild.offsetWidth);
+    
+                var parsedWidth = parseInt(last.lastChild.offsetWidth);
+                var str = (last.lastChild.style.left).replace('px','');
+                var parsed = parseInt(str);
+                li.style.left = `${parsed + parsedWidth}px`; 
+
+                theBranchUL.appendChild(li);
+                var liLine = document.createElement("li");
+                liLine.setAttribute("class", "half abs"); 
+                liLine.innerHTML = '<div class="line"></div>';
+                liLine.style.left = `${parsed + parsedWidth + 220.0}px`; 
+                theBranchUL.appendChild(liLine);  
             }else{
-                li.innerHTML = '<p class="process">'+`${body}`+'</p><div class="arrow"></div>';
+                if (isFirstElment) {
+                    li.innerHTML = '<p class="process">'+`${body}`+'</p>';
+                }else{
+                    li.innerHTML = '<p class="process">'+`${body}`+'</p><div class="arrow"></div>';
+                }
+                
+                theBranchUL.appendChild(li);
+                var liLine = document.createElement("li");
+                liLine.setAttribute("class", "half"); 
+                liLine.innerHTML = '<div class="line"></div>';
+               
+                theBranchUL.appendChild(liLine);  
             }
-            if (x!=0) {
-                li.style.left=`${x}px`;    
-            }
-            theBranchUL.appendChild(li);
-            var liLine = document.createElement("li");
-            liLine.setAttribute("class", "half"); 
-            liLine.innerHTML = '<div class="line"></div>';
-            if (x!=0) {
-                liLine.style.left=`${x}px`;    
-            }
-            theBranchUL.appendChild(liLine);  
+            
+           
         }else if(status == 2){
             //else part
             console.log("222?");
@@ -260,6 +290,30 @@ window.addEventListener('DOMContentLoaded', function() {
             liLine.style.left = `${parsed + parsedWidth + 220.0}px`;
             theBranchUL.appendChild(liLine);  
         }else if(status == 3){
+            if (baseline > 1) {
+                //then part
+            // baseline -= 1;
+            var query0 = ".branch" + String(baseline-1) + " ul";
+            var elses = document.querySelector(query0);
+            var last = elses;
+            console.log('test3');
+            console.log(query0);
+            console.log(last.lastChild.style.left);
+            console.log(last.lastChild.offsetWidth);
+
+            var parsedWidth = parseInt(last.lastChild.offsetWidth);
+            var str = (last.lastChild.style.left).replace('px','');
+            var parsed = parseInt(str);
+
+            var li3 = document.createElement("li");
+            li3.setAttribute("class", "abs"); 
+            li3.innerHTML = '<p class="process">'+`${body}`+'</p><div class="arrow-down"></div>';
+
+          
+            // var val = plis.length * 220.0 + (allDiamonds.length-1) * 220.0 + (liHalfs.length-1) * 110.0; 
+            li3.style.left=`${parsed - 110.0 - 110.0}px`;//minus half line minus diamondhalf    
+            theBranchUL.appendChild(li3);
+            }else{
             //then part
             baseline -= 1;
             var li = document.createElement("li");
@@ -284,6 +338,7 @@ window.addEventListener('DOMContentLoaded', function() {
             var val = plis.length * 220.0 + (allDiamonds.length-1) * 220.0 + (liHalfs.length-1) * 110.0; 
             li.style.left=`${val}px`;    
             theBranchUL.appendChild(li);
+            }
         }
         
         console.log('process');
