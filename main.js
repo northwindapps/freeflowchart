@@ -62,7 +62,7 @@ function getValue(data){
 
             if (newtoken == 'endprocess') {
                 //regular expression if there is an  else after an if?
-                tokenList.push('end');
+                tokenList.push('endprocess');
                 token ='';
             }
 
