@@ -60,8 +60,6 @@ window.addEventListener('DOMContentLoaded', function() {
         // for (let h = 0; h < finalLane; h++) {
             for (let index = 0; index < filtered.length; index++) {
                 console.log(filtered[index]);
-       
-                    
                 switch (filtered[index]) {
                     case 'if':
                         // if (elementLaneInfo[index] == h) {
@@ -394,18 +392,12 @@ window.addEventListener('DOMContentLoaded', function() {
          var diamond = document.createElement("li");
          diamond.setAttribute("class", "d"); 
          diamond.innerHTML = '<div class="diamond"><p class="d-body">'+`${body}`+'</p></div><span class="n">yes</span>';
-         if (x!=0) {
-            //  diamond.style.left=`${x}px`;    
-         }
          theBranchUL.appendChild(diamond);
          console.log('process');
  
          var liLine = document.createElement("li");
          liLine.setAttribute("class", "half"); 
          liLine.innerHTML = '<div class="line"></div>';
-         if (x!=0) {
-            //  liLine.style.left=`${x}px`;    
-         }
          theBranchUL.appendChild(liLine);
        
         
@@ -425,9 +417,6 @@ window.addEventListener('DOMContentLoaded', function() {
         //diamond half
         var val = 0.0;
         val = (liHalfs.length-1)*110.0 + plis.length*220.0 + (allDiamonds.length-1)*220.0 + 110.0;
-        // val = 180.0 * plis.length;
-        // val += 110.0 * liHalfs.length;
-        // val += 180.0 * (lis.length - liHalfs.length); 
         console.log(plis.length);
         console.log(liHalfs.length);
         console.log(val);
@@ -444,15 +433,6 @@ window.addEventListener('DOMContentLoaded', function() {
         li.setAttribute("class", "abs"); 
         li.innerHTML = '<div class="ifthen"></div>';
         
-        //relative
-        if (x!=0 && val > 0) {
-            // li.style.left=`${x+val}px`;    
-        }
-        else if (val > 0) {
-            console.log(val);
-            // li.style.left=`${x+val}px`;    
-        }
-
         
 
         li.style.left=`${val}px`; 
@@ -476,11 +456,11 @@ window.addEventListener('DOMContentLoaded', function() {
 
     function checkTotalLanes(filtered){
         var lane = 0;
-        var maxLane = 2;
+        var maxLane = 0;
         for (let index = 0; index < filtered.length; index++) {
             switch (filtered[index]) {
                 case 'if':
-                    lane += 1;
+                    // lane += 1;
                     break;
                 case 'then':
                     lane += 1;
@@ -491,6 +471,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 case 'endflow':
                     break;
                 case 'endif':
+                    lane += 1;
                     if (maxLane < lane) {
                         maxLane = lane;
                     }
@@ -499,7 +480,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 default:
                     break;
             }
-            var elementlane = lane - 1;
+            var elementlane = lane ;
             if (elementlane < 0) {
                 elementlane = 0;
             }
