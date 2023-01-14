@@ -116,7 +116,7 @@ html,body{
     height: 313px;
 }
 
-.endprocess{
+.endflow{
     z-index: 2;
     position: relative;
     top: 125px;
@@ -127,7 +127,7 @@ html,body{
     border: solid 1px gainsboro;
 }
 
-.endprocess div.arrow{
+.endflow div.arrow{
     top: 12px !important;
     width: 0px !important;
 }

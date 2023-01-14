@@ -27,7 +27,7 @@ window.addEventListener('DOMContentLoaded', function() {
     var ta = null;
     var str = '';
     var elementLaneInfo = [];
-    var reservedWordsList = ['if','else','endif','process','endprocess','<>','endflow','then', ' '];
+    var reservedWordsList = ['if','else','endif','process','endthen','<>','endflow','then', ' '];
     var srcAry = ['if', 'do you have pasta? ','italian','endif','if', 'do you have rice?', 'Chinese', 'endif', 'if', 'beans', 'English', 'endif','', '  ', 'if', '  do you have pasta source?', 'then Italian ', 'else', '  ', 'go to Chinese Place ', 'end', 'if', 'you are a vegitalian', 'arabiata is a choice for you','none','none','none','else','you like meat source','none','none','none','endif','done','endflow'];
     //if do you have pasta? <>else <>go to Mcdonalds <>end <>if do you have pasta source? <>then Italian <>end <>else <>go to Chinese Place <>end <><>
 	const values = JSON.parse(sessionStorage.getItem("src"));
@@ -107,7 +107,7 @@ window.addEventListener('DOMContentLoaded', function() {
                             console.log(filtered[index+1]);
                         // }
                         break;
-                    case 'endprocess':
+                    case 'endthen':
                         status = 0;
                         break;
                     case 'endflow':
@@ -560,7 +560,7 @@ window.addEventListener('DOMContentLoaded', function() {
         var theBranchUL = document.querySelector(query);
         var li = document.createElement("li");
         li.setAttribute("class", "half"); 
-        li.innerHTML = '<div class="endprocess"><div class="arrow"></div></div>';
+        li.innerHTML = '<div class="endflow"><div class="arrow"></div></div>';
         if (x!=0) {
             li.style.left=`${x}px`;    
         }
@@ -581,7 +581,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 case 'else':
                     lane += 1;
                     break;
-                case 'endprocess':
+                case 'endthen':
                     lane -= 1;
                     break;
                 case 'endflow':

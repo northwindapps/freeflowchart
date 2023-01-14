@@ -1,7 +1,7 @@
 var ta = null;
 var ta2 = null;
 var str = '';
-var reservedWordsList = ['if','else','endif','endprocess','endflow','none','then'];
+var reservedWordsList = ['if','else','endif','endthen','endflow','none','then'];
 let tokenList = [];
 let rwList = [];
 var token = '';
@@ -60,9 +60,9 @@ function getValue(data){
                 token='';
             }
 
-            if (newtoken == 'endprocess') {
+            if (newtoken == 'endthen') {
                 //regular expression if there is an  else after an if?
-                tokenList.push('endprocess');
+                tokenList.push('endthen');
                 token ='';
             }
 
