@@ -386,20 +386,14 @@ window.addEventListener('DOMContentLoaded', function() {
             var parsedWidth = parseInt(last.lastChild.offsetWidth);
             var str = (last.lastChild.style.left).replace('px','');
             var parsed = parseInt(str);
-            
-
-         
-
-            
-
-
-
+        
              //if part abs
             query = ".branch" + String(baseline) + " ul";
             theBranchUL = document.querySelector(query);
             var diamond = document.createElement("li");
             diamond.setAttribute("class", "d abs"); 
-            diamond.innerHTML = '<div class="diamond"><p class="d-body">'+`${body}`+'</p></div><span class="n">yes</span>';
+            diamond.innerHTML = '<div class="diamond"><p class="d-body">'+`${body}`+'</p></div><span class="y">yes</span><span class="n">no</span>';
+        
             diamond.style.left = `${parsed + parsedWidth}px`; 
             theBranchUL.appendChild(diamond);
     
@@ -443,6 +437,7 @@ window.addEventListener('DOMContentLoaded', function() {
 
             
        
+
         }else{
         //TODO calculate ifel left px 
         var query2 = ".branch" + String(baseline) + " .half";
