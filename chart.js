@@ -112,8 +112,9 @@ window.addEventListener('DOMContentLoaded', function() {
                         break;
                     case 'endflow':
                         // if (elementLaneInfo[index] == h) {
-                            status = 0;
-                            await endFlow();
+                           
+                        status = 0;
+                            await endFlow(x=0,baseline=elementLaneInfo[index]);
                         // }
                         break;
                     case 'endif':
@@ -510,13 +511,6 @@ window.addEventListener('DOMContentLoaded', function() {
             var str = (last.lastChild.style.left).replace('px','');
             var parsed = parseInt(str);
             
-
-         
-
-            
-
-
-
              //if part abs
             query = ".branch" + String(baseline) + " ul";
             theBranchUL = document.querySelector(query);
@@ -616,16 +610,41 @@ window.addEventListener('DOMContentLoaded', function() {
     }
 
     function endFlow(x=0,baseline=ulIdx,status=0) {
+        console.log('endflowLane');
+        console.log(baseline); 
         // var theBranchUL = document.querySelectorAll(".branch"+ ulIdx-1 +" ul");
         var query = ".branch" + String(baseline) + " ul";
         var theBranchUL = document.querySelector(query);
-        var li = document.createElement("li");
-        li.setAttribute("class", "half"); 
-        li.innerHTML = '<div class="endflow"><div class="arrow"></div></div>';
-        if (x!=0) {
-            li.style.left=`${x}px`;    
+        if (baseline>0) {
+            var query0 = ".branch" + String(baseline) + " ul";
+            var ifeles = document.querySelector(query0);
+            var last = ifeles;
+            console.log('test');
+            console.log(query0);
+            console.log(last.lastChild.style.left);
+            console.log(last.lastChild.offsetWidth);
+            var parsedWidth = parseInt(last.lastChild.offsetWidth);
+            var str = (last.lastChild.style.left).replace('px','');
+            var parsed = parseInt(str);
+
+            var li = document.createElement("li");
+            li.setAttribute("class", "half"); 
+            li.innerHTML = '<div class="endflow"><div class="arrow"></div></div>';
+            li.style.left = `${parsed + parsedWidth}px`; 
+            theBranchUL.appendChild(li);
+
+
+
+
+            
+            
+        }else{
+            
+            var li = document.createElement("li");
+            li.setAttribute("class", "half"); 
+            li.innerHTML = '<div class="endflow"><div class="arrow"></div></div>';
+            theBranchUL.appendChild(li);
         }
-        theBranchUL.appendChild(li);
     }
 
     function checkTotalLanes(filtered){
