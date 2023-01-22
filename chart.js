@@ -28,7 +28,7 @@ window.addEventListener('DOMContentLoaded', function() {
     var str = '';
     var elementLaneInfo = [];
     var elseElementLaneInfo = [];
-    var reservedWordsList = ['if','else','endif','process','endthen','<>','endflow','then', ' ','endprocess','endelse'];
+    var reservedWordsList = ['if','else','endif','process','endthen','<>','endflow','then', ' ','endprocess','endelse','none'];
     var srcAry = ['if', 'do you have pasta? ','italian','endif','if', 'do you have rice?', 'Chinese', 'endif', 'if', 'beans', 'English', 'endif','', '  ', 'if', '  do you have pasta source?', 'then Italian ', 'else', '  ', 'go to Chinese Place ', 'end', 'if', 'you are a vegitalian', 'arabiata is a choice for you','none','none','none','else','you like meat source','none','none','none','endif','done','endflow'];
     //if do you have pasta? <>else <>go to Mcdonalds <>end <>if do you have pasta source? <>then Italian <>end <>else <>go to Chinese Place <>end <><>
 	const values = JSON.parse(sessionStorage.getItem("src"));
@@ -137,7 +137,27 @@ window.addEventListener('DOMContentLoaded', function() {
                             }   
                             status = 0;
                         // }
-                        break;    
+                        break;
+                    case 'none':
+                            //process
+                            if (filtered[index] && status == 0) {
+                                // if (elementLaneInfo[index] == h) {
+                                    addLine(x=0,baseline=elementLaneInfo[index],filtered[index],status=0);
+                                // }
+                            }
+    
+                            if (filtered[index] && status == 1) {
+                                // if (elementLaneInfo[index] == h) {
+                                    addLine(x=0,baseline=elementLaneInfo[index],filtered[index],status=1);
+                                // }
+                            }
+    
+                            if (filtered[index] && status == 2) {
+                                // if (elementLaneInfo[index] == h+1) {
+                                    addLine(x=0,baseline=elementLaneInfo[index],filtered[index],status=2);
+                                // }
+                            }               
+                            break;    
                     default:
                         //process
                         if (filtered[index] && status == 0) {
@@ -696,5 +716,101 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log('elseLaneInfo');
         console.log(elseElementLaneInfo);
         return maxLane;
+    }
+
+    function addLine(x=0,baseline=0,body='',status=0) {
+        // var theBranchUL = document.querySelectorAll(".branch"+ ulIdx-1 +" ul");
+        var query = ".branch" + String(baseline) + " ul";
+        var theBranchUL = document.querySelector(query);
+        var isFirstElment = false;
+        if (!theBranchUL){
+            addBranch(x = baseline);
+            theBranchUL = document.querySelector(query);
+            isFirstElment = true;
+        }
+        
+        if (status == 0 || status == 1) {
+            console.log(baseline);
+            console.log(status);
+            console.log(body);
+            var li = document.createElement("li");
+            if (baseline > 0) {
+                if (isFirstElment) {
+                    li.setAttribute("class", "half abs"); 
+                    li.innerHTML = '<div class="line"></div>';
+                }else{
+                    li.setAttribute("class", "half abs"); 
+                    li.innerHTML = '<div class="line"></div>';
+                }
+
+                var query0 = ".branch" + String(baseline) + " ul";
+                var elses = document.querySelector(query0);
+                var last = elses;
+                console.log('test');
+                console.log(query0);
+                console.log(last.lastChild.style.left);
+                console.log(last.lastChild.offsetWidth);
+    
+                var parsedWidth = parseInt(last.lastChild.offsetWidth);
+                var str = (last.lastChild.style.left).replace('px','');
+                var parsed = parseInt(str);
+                li.style.left = `${parsed + parsedWidth}px`; 
+
+                theBranchUL.appendChild(li);
+                var liLine = document.createElement("li");
+                liLine.setAttribute("class", "half abs"); 
+                liLine.innerHTML = '<div class="line"></div>';
+                liLine.style.left = `${parsed + parsedWidth + 220.0}px`; 
+                theBranchUL.appendChild(liLine);  
+                //
+            }else{
+                if (isFirstElment) {
+                    li.setAttribute("class", "half"); 
+                    li.innerHTML = '<div class="line"></div>';
+                }else{
+                    li.setAttribute("class", "half"); 
+                    li.innerHTML = '<div class="line"></div>';
+                }
+                
+                theBranchUL.appendChild(li);
+                var liLine = document.createElement("li");
+                liLine.setAttribute("class", "half"); 
+                liLine.innerHTML = '<div class="line"></div>';
+               
+                theBranchUL.appendChild(liLine);  
+            }
+            
+           
+        }else if(status == 2){
+            //else part
+            console.log("222?");
+        
+            var li = document.createElement("li");
+            li.setAttribute("class", "half abs"); 
+            li.innerHTML = '<div class="line"></div>';
+            var query0 = ".branch" + String(baseline) + " ul";
+            var elses = document.querySelector(query0);
+            var last = elses;
+            console.log('test');
+            console.log(query0);
+            console.log(last.lastChild.style.left);
+            console.log(last.lastChild.offsetWidth);
+
+            var parsedWidth = parseInt(last.lastChild.offsetWidth);
+            var str = (last.lastChild.style.left).replace('px','');
+            var parsed = parseInt(str);
+            li.style.left = `${parsed + parsedWidth}px`; 
+            theBranchUL.appendChild(li);
+
+            var liLine = document.createElement("li");
+            liLine.setAttribute("class", "half abs"); 
+            liLine.innerHTML = '<div class="line"></div>';
+
+            liLine.style.left = `${parsed + parsedWidth + 220.0}px`;
+            theBranchUL.appendChild(liLine);  
+        }else{
+
+        }     
+        console.log('line');
     }
 });
