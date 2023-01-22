@@ -27,7 +27,8 @@ window.addEventListener('DOMContentLoaded', function() {
     var ta = null;
     var str = '';
     var elementLaneInfo = [];
-    var reservedWordsList = ['if','else','endif','process','endthen','<>','endflow','then', ' '];
+    var elseElementLaneInfo = [];
+    var reservedWordsList = ['if','else','endif','process','endthen','<>','endflow','then', ' ','endprocess','endelse'];
     var srcAry = ['if', 'do you have pasta? ','italian','endif','if', 'do you have rice?', 'Chinese', 'endif', 'if', 'beans', 'English', 'endif','', '  ', 'if', '  do you have pasta source?', 'then Italian ', 'else', '  ', 'go to Chinese Place ', 'end', 'if', 'you are a vegitalian', 'arabiata is a choice for you','none','none','none','else','you like meat source','none','none','none','endif','done','endflow'];
     //if do you have pasta? <>else <>go to Mcdonalds <>end <>if do you have pasta source? <>then Italian <>end <>else <>go to Chinese Place <>end <><>
 	const values = JSON.parse(sessionStorage.getItem("src"));
@@ -55,8 +56,10 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log(filtered);
         var lanes = checkTotalLanes(filtered);
         var finalLane = lanes;
+        var elseLane = 0;
         console.log(lanes);
         console.log(elementLaneInfo);
+
         // for (let h = 0; h < finalLane; h++) {
             for (let index = 0; index < filtered.length; index++) {
                 console.log(filtered[index]);
@@ -110,6 +113,11 @@ window.addEventListener('DOMContentLoaded', function() {
                     case 'endthen':
                         status = 0;
                         break;
+                    case 'endprocess':
+                        status = 0;
+                        break;
+                    case 'endelse':
+                        break;
                     case 'endflow':
                         // if (elementLaneInfo[index] == h) {
                            
@@ -150,7 +158,6 @@ window.addEventListener('DOMContentLoaded', function() {
                             // }
                         }               
                         break;
-                
             }
             // }
         }    
@@ -360,9 +367,6 @@ window.addEventListener('DOMContentLoaded', function() {
         li.setAttribute("class", "endifel"); 
         li.innerHTML = '<div class="rect"></div><div class="circle"></div>';   
         theBranchUL.appendChild(li);
-        
-            //
-            
         console.log('process');
     }
 
@@ -650,6 +654,7 @@ window.addEventListener('DOMContentLoaded', function() {
     function checkTotalLanes(filtered){
         var lane = 0;
         var maxLane = 0;
+        var elseLane = 0;
         for (let index = 0; index < filtered.length; index++) {
             switch (filtered[index]) {
                 case 'if':
@@ -660,19 +665,23 @@ window.addEventListener('DOMContentLoaded', function() {
                     break;
                 case 'else':
                     lane += 1;
+                    elseLane += 1;
+                    elseElementLaneInfo.push(elseLane);
                     break;
                 case 'endthen':
+                    lane -= 1;
+                    break;
+                case 'endelse':
                     lane -= 1;
                     break;
                 case 'endflow':
                     break;
                 case 'endif':
-                    // lane += 1;
                     lane += 1;
                     if (maxLane < lane) {
                         maxLane = lane;
                     }
-                    lane = 0;
+                    lane -= 1;
                     break;    
                 default:
                     break;
@@ -683,6 +692,9 @@ window.addEventListener('DOMContentLoaded', function() {
             }
             elementLaneInfo.push(elementlane);
         }
+
+        console.log('elseLaneInfo');
+        console.log(elseElementLaneInfo);
         return maxLane;
     }
 });

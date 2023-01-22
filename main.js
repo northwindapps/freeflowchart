@@ -1,7 +1,7 @@
 var ta = null;
 var ta2 = null;
 var str = '';
-var reservedWordsList = ['if','else','endif','endthen','endflow','none','then'];
+var reservedWordsList = ['if','else','endif','endthen','endflow','none','then','endprocess','endelse'];
 let tokenList = [];
 let rwList = [];
 var token = '';
@@ -16,6 +16,13 @@ console.log(src);
 
 function getSrc2 () {
     var src = ta2.value.replace(/\n\r?/g, ' <>');
+    src = src + '<>';
+    getValue(src)
+    console.log(src);
+    }
+
+function getSrc3 () {
+    var src = ta3.value.replace(/\n\r?/g, ' <>');
     src = src + '<>';
     getValue(src)
     console.log(src);
@@ -65,6 +72,19 @@ function getValue(data){
                 tokenList.push('endthen');
                 token ='';
             }
+
+            if (newtoken == 'endprocess') {
+                //regular expression if there is an  else after an if?
+                tokenList.push('endprocess');
+                token ='';
+            }
+
+            if (newtoken == 'endelse') {
+                //regular expression if there is an  else after an if?
+                tokenList.push(newtoken);
+                token ='';
+            }
+
 
             if (newtoken == 'then'){
                 tokenList.push(newtoken);
