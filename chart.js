@@ -56,7 +56,7 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log(filtered);
         var lanes = checkTotalLanes(filtered);
         var finalLane = lanes;
-        var elseLane = 0;
+      
         console.log(lanes);
         console.log(elementLaneInfo);
 
@@ -84,6 +84,7 @@ window.addEventListener('DOMContentLoaded', function() {
                             }else{
                                 await addIfelse(x=0,baseline=elementLaneInfo[index],body=filtered[index+1]);
                             }
+                            console.log(filtered[index+1]);
                             filtered[index+1] = '';
                             status = 1;
                         // }
@@ -119,11 +120,9 @@ window.addEventListener('DOMContentLoaded', function() {
                     case 'endelse':
                         break;
                     case 'endflow':
-                        // if (elementLaneInfo[index] == h) {
-                           
                         status = 0;
-                            await endFlow(x=0,baseline=elementLaneInfo[index]);
-                        // }
+                        endFlow(x=0,baseline=elementLaneInfo[index],status=0);
+                        
                         break;
                     case 'endif':
                         // if (elementLaneInfo[index] == h) {
@@ -142,19 +141,19 @@ window.addEventListener('DOMContentLoaded', function() {
                             //process
                             if (filtered[index] && status == 0) {
                                 // if (elementLaneInfo[index] == h) {
-                                    addLine(x=0,baseline=elementLaneInfo[index],filtered[index],status=0);
+                                    addNone(x=0,baseline=elementLaneInfo[index],filtered[index],status=0);
                                 // }
                             }
     
                             if (filtered[index] && status == 1) {
                                 // if (elementLaneInfo[index] == h) {
-                                    addLine(x=0,baseline=elementLaneInfo[index],filtered[index],status=1);
+                                    addNone(x=0,baseline=elementLaneInfo[index],filtered[index],status=1);
                                 // }
                             }
     
                             if (filtered[index] && status == 2) {
                                 // if (elementLaneInfo[index] == h+1) {
-                                    addLine(x=0,baseline=elementLaneInfo[index],filtered[index],status=2);
+                                    addNone(x=0,baseline=elementLaneInfo[index],filtered[index],status=2);
                                 // }
                             }               
                             break;    
@@ -178,6 +177,8 @@ window.addEventListener('DOMContentLoaded', function() {
                             // }
                         }               
                         break;
+
+                        
             }
             // }
         }    
@@ -504,7 +505,7 @@ window.addEventListener('DOMContentLoaded', function() {
         diamond.setAttribute("class", "d"); 
         diamond.innerHTML = '<div class="diamond"><p class="d-body">'+`${body}`+'</p></div><span class="y">yes</span><span class="n">no</span>';
         theBranchUL.appendChild(diamond);
-        console.log('process');
+        console.log(body);
 
         var liLine = document.createElement("li");
         liLine.setAttribute("class", "half"); 
@@ -634,8 +635,6 @@ window.addEventListener('DOMContentLoaded', function() {
     }
 
     function endFlow(x=0,baseline=ulIdx,status=0) {
-        console.log('endflowLane');
-        console.log(baseline); 
         // var theBranchUL = document.querySelectorAll(".branch"+ ulIdx-1 +" ul");
         var query = ".branch" + String(baseline) + " ul";
         var theBranchUL = document.querySelector(query);
@@ -651,10 +650,14 @@ window.addEventListener('DOMContentLoaded', function() {
             var str = (last.lastChild.style.left).replace('px','');
             var parsed = parseInt(str);
 
+            //
+            query0 = ".branch" + String(baseline) + " .ef";
+            var liefs = document.querySelectorAll(query0);
+            
             var li = document.createElement("li");
-            li.setAttribute("class", "half"); 
+            li.setAttribute("class", "half ef"); 
             li.innerHTML = '<div class="endflow"><div class="arrow"></div></div>';
-            li.style.left = `${parsed + parsedWidth}px`; 
+            li.style.left = `${parsed + parsedWidth - ((liefs.length) * 110.0) }px`; 
             theBranchUL.appendChild(li);
 
 
@@ -665,7 +668,7 @@ window.addEventListener('DOMContentLoaded', function() {
         }else{
             
             var li = document.createElement("li");
-            li.setAttribute("class", "half"); 
+            li.setAttribute("class", "half ef"); 
             li.innerHTML = '<div class="endflow"><div class="arrow"></div></div>';
             theBranchUL.appendChild(li);
         }
@@ -718,7 +721,7 @@ window.addEventListener('DOMContentLoaded', function() {
         return maxLane;
     }
 
-    function addLine(x=0,baseline=0,body='',status=0) {
+    function addNone(x=0,baseline=0,body='',status=0) {
         // var theBranchUL = document.querySelectorAll(".branch"+ ulIdx-1 +" ul");
         var query = ".branch" + String(baseline) + " ul";
         var theBranchUL = document.querySelector(query);
@@ -755,12 +758,11 @@ window.addEventListener('DOMContentLoaded', function() {
                 var str = (last.lastChild.style.left).replace('px','');
                 var parsed = parseInt(str);
                 li.style.left = `${parsed + parsedWidth}px`; 
-
                 theBranchUL.appendChild(li);
                 var liLine = document.createElement("li");
                 liLine.setAttribute("class", "half abs"); 
                 liLine.innerHTML = '<div class="line"></div>';
-                liLine.style.left = `${parsed + parsedWidth + 220.0}px`; 
+                liLine.style.left = `${parsed + parsedWidth}px`; 
                 theBranchUL.appendChild(liLine);  
                 //repeat again
                 li.setAttribute("class", "half abs"); 
@@ -783,7 +785,7 @@ window.addEventListener('DOMContentLoaded', function() {
                 liLine = document.createElement("li");
                 liLine.setAttribute("class", "half abs"); 
                 liLine.innerHTML = '<div class="line"></div>';
-                liLine.style.left = `${parsed + parsedWidth + 220.0}px`; 
+                liLine.style.left = `${parsed + parsedWidth + 110.0}px`; 
                 theBranchUL.appendChild(liLine);  
             }else{
                 if (isFirstElment) {
@@ -839,7 +841,7 @@ window.addEventListener('DOMContentLoaded', function() {
             liLine.setAttribute("class", "half abs"); 
             liLine.innerHTML = '<div class="line"></div>';
 
-            liLine.style.left = `${parsed + parsedWidth + 220.0}px`;
+            liLine.style.left = `${parsed + parsedWidth + 110.0}px`;
             theBranchUL.appendChild(liLine);  
 
             //repeat
@@ -864,7 +866,7 @@ window.addEventListener('DOMContentLoaded', function() {
             liLine.setAttribute("class", "half abs"); 
             liLine.innerHTML = '<div class="line"></div>';
 
-            liLine.style.left = `${parsed + parsedWidth + 220.0}px`;
+            liLine.style.left = `${parsed + parsedWidth + 110.0}px`;
             theBranchUL.appendChild(liLine);  
 
         }else{
