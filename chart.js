@@ -762,7 +762,29 @@ window.addEventListener('DOMContentLoaded', function() {
                 liLine.innerHTML = '<div class="line"></div>';
                 liLine.style.left = `${parsed + parsedWidth + 220.0}px`; 
                 theBranchUL.appendChild(liLine);  
-                //
+                //repeat again
+                li.setAttribute("class", "half abs"); 
+                    li.innerHTML = '<div class="line"></div>';
+
+                query0 = ".branch" + String(baseline) + " ul";
+                elses = document.querySelector(query0);
+                last = elses;
+                console.log('test');
+                console.log(query0);
+                console.log(last.lastChild.style.left);
+                console.log(last.lastChild.offsetWidth);
+    
+                parsedWidth = parseInt(last.lastChild.offsetWidth);
+                str = (last.lastChild.style.left).replace('px','');
+                parsed = parseInt(str);
+                li.style.left = `${parsed + parsedWidth}px`; 
+
+                theBranchUL.appendChild(li);
+                liLine = document.createElement("li");
+                liLine.setAttribute("class", "half abs"); 
+                liLine.innerHTML = '<div class="line"></div>';
+                liLine.style.left = `${parsed + parsedWidth + 220.0}px`; 
+                theBranchUL.appendChild(liLine);  
             }else{
                 if (isFirstElment) {
                     li.setAttribute("class", "half"); 
@@ -774,6 +796,17 @@ window.addEventListener('DOMContentLoaded', function() {
                 
                 theBranchUL.appendChild(li);
                 var liLine = document.createElement("li");
+                liLine.setAttribute("class", "half"); 
+                liLine.innerHTML = '<div class="line"></div>';
+               
+                theBranchUL.appendChild(liLine);  
+
+                //repeat
+                li.setAttribute("class", "half"); 
+                    li.innerHTML = '<div class="line"></div>';
+                
+                theBranchUL.appendChild(li);
+                liLine = document.createElement("li");
                 liLine.setAttribute("class", "half"); 
                 liLine.innerHTML = '<div class="line"></div>';
                
@@ -808,6 +841,32 @@ window.addEventListener('DOMContentLoaded', function() {
 
             liLine.style.left = `${parsed + parsedWidth + 220.0}px`;
             theBranchUL.appendChild(liLine);  
+
+            //repeat
+            li = document.createElement("li");
+            li.setAttribute("class", "half abs"); 
+            li.innerHTML = '<div class="line"></div>';
+            query0 = ".branch" + String(baseline) + " ul";
+            elses = document.querySelector(query0);
+            last = elses;
+            console.log('test');
+            console.log(query0);
+            console.log(last.lastChild.style.left);
+            console.log(last.lastChild.offsetWidth);
+
+            parsedWidth = parseInt(last.lastChild.offsetWidth);
+            str = (last.lastChild.style.left).replace('px','');
+            parsed = parseInt(str);
+            li.style.left = `${parsed + parsedWidth}px`; 
+            theBranchUL.appendChild(li);
+
+            liLine = document.createElement("li");
+            liLine.setAttribute("class", "half abs"); 
+            liLine.innerHTML = '<div class="line"></div>';
+
+            liLine.style.left = `${parsed + parsedWidth + 220.0}px`;
+            theBranchUL.appendChild(liLine);  
+
         }else{
 
         }     
