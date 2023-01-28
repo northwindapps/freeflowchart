@@ -32,6 +32,15 @@ window.addEventListener('DOMContentLoaded', function() {
 	const values = JSON.parse(sessionStorage.getItem("src"));
 	console.log('welcome back',values);
     parseValue(values);
+   
+
+    async function setFunctions(){
+        // var query = ".modal" + "#" + String(1);
+        // allModals = document.querySelectorAll(".modal");
+        print("39");
+        // print(allModals);
+    
+    }
 
     async function parseValue(ary){
         // tokenList = [];
@@ -178,7 +187,9 @@ window.addEventListener('DOMContentLoaded', function() {
                         
             }
             // }
-        }    
+        }   
+        
+   
     }
     
     function addLane() {
@@ -246,13 +257,26 @@ window.addEventListener('DOMContentLoaded', function() {
             console.log(status);
             console.log(body);
             var li = document.createElement("li");
+            li.setAttribute("id",id);
+            li.id;
+            li.addEventListener('click', function(event) {
+                // do something
+                console.log(event.currentTarget.id);
+                var modal = document.querySelector("[id='"+id+"'] .modal");
+                console.log(modal);
+                modal.classList.toggle("none");
+            });
             if (baseline > 0) {
                 if (isFirstElment) {
                     li.setAttribute("class", "abs"); 
-                    li.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a>';
+                    li.setAttribute("id",id);
+                   
+                    li.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a><div class="modal none"><input type="text" placeholder="file name"></input><button>ok</button><input type="text" placeholder="url"></input><button>ok</button></div>';
                 }else{
                     li.setAttribute("class", "abs"); 
-                    li.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a><div class="arrow"></div>';
+                    li.setAttribute("id",id);
+                   
+                    li.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a><div class="arrow"></div><div class="modal none"><input type="text" placeholder="file name"></input><button>ok</button><input type="text" placeholder="url"></input><button>ok</button></div>';
                 }
 
                 var query0 = ".branch" + String(baseline) + " ul";
@@ -276,11 +300,11 @@ window.addEventListener('DOMContentLoaded', function() {
                 theBranchUL.appendChild(liLine);  
             }else{
                 if (isFirstElment) {
-                    li.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a>';
+                    li.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a><div class="modal none"><input type="text" placeholder="file name"></input><button>ok</button><input type="text" placeholder="url"></input><button>ok</button></div>';
                 }else{
-                    li.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a><div class="arrow"></div>';
+                    li.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a><div class="arrow"></div><div class="modal none"><input type="text" placeholder="file name"></input><button>ok</button><input type="text" placeholder="url"></input><button>ok</button></div>';
                 }
-                
+               
                 theBranchUL.appendChild(li);
                 var liLine = document.createElement("li");
                 liLine.setAttribute("class", "half"); 
@@ -296,7 +320,16 @@ window.addEventListener('DOMContentLoaded', function() {
         
             var li = document.createElement("li");
             li.setAttribute("class", "abs"); 
-            li.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a><div class="arrow"></div>';
+            li.setAttribute("id",id);
+            li.id;
+            li.addEventListener('click', function(event) {
+                // do something
+                console.log(event.currentTarget.id);
+                var modal = document.querySelector("[id='"+id+"'] .modal");
+                console.log(modal);
+                modal.classList.toggle("none");
+            });
+            li.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a><div class="arrow"></div><div class="modal none"><input type="text" placeholder="file name"></input><button>ok</button><input type="text" placeholder="url"></input><button>ok</button></div>';
             var query0 = ".branch" + String(baseline) + " ul";
             var elses = document.querySelector(query0);
             var last = elses;
@@ -335,7 +368,16 @@ window.addEventListener('DOMContentLoaded', function() {
 
             var li3 = document.createElement("li");
             li3.setAttribute("class", "abs"); 
-            li3.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a><div class="arrow-down"></div>';
+            li3.setAttribute("id",id);
+            li3.id;
+            li3.addEventListener('click', function(event) {
+                // do something
+                console.log(event.currentTarget.id);
+                var modal = document.querySelector("[id='"+id+"'] .modal");
+                console.log(modal);
+                modal.classList.toggle("none");
+            });
+            li3.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a><div class="arrow-down"></div><div class="modal none"><input type="text" placeholder="file name"></input><button>ok</button><input type="text" placeholder="url"></input><button>ok</button></div>';
 
         
             // var val = plis.length * 220.0 + (allDiamonds.length-1) * 220.0 + (liHalfs.length-1) * 110.0; 
@@ -346,7 +388,16 @@ window.addEventListener('DOMContentLoaded', function() {
             baseline -= 1;
             var li = document.createElement("li");
             li.setAttribute("class", "abs"); 
-            li.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a><div class="arrow-down"></div>';
+            li.setAttribute("id",id);
+            li.id;
+            li.addEventListener('click', function(event) {
+                // do something
+                console.log(event.currentTarget.id);
+                var modal = document.querySelector("[id='"+id+"'] .modal");
+                console.log(modal);
+                modal.classList.toggle("none");
+            });
+            li.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a><div class="arrow-down"></div><div class="modal none"><input type="text" placeholder="file name"></input><button>ok</button><input type="text" placeholder="url"></input><button>ok</button></div>';
 
             var query2 = ".branch" + String(baseline) + " .half";
             liHalfs = document.querySelectorAll(query2);

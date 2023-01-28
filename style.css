@@ -92,6 +92,14 @@ a{
     text-decoration-line: none;
 }
 
+.modal{
+    position: relative;
+}
+
+.none{
+    visibility: hidden;
+}
+
 .ifel{
     content: '';
     position: absolute;
