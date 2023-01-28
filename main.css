@@ -83,6 +83,15 @@ form{
     justify-content: center;
 }
 
+.wrapper img{
+    margin-top: 10px;
+    width: 100%;
+    object-fit: cover;
+    box-shadow: 0 2px 5px 1px rgb(64 60 67 / 16%);
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
 .navbar {
     position: relative;
     display: -webkit-box;

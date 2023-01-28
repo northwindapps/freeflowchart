@@ -20,8 +20,6 @@ window.addEventListener('DOMContentLoaded', function() {
     // addIfelseBtn.addEventListener("click", ()=>{ addIfelse(x=90);});
     // addIfelseBtn.addEventListener("click", ()=>{ addIfelse(x=0);});
 
-
-
     //
     //
     var ta = null;
@@ -42,7 +40,6 @@ window.addEventListener('DOMContentLoaded', function() {
         var status = 0;
         var filtered = [];
         var reserved = [];
-        var currentLane = 0;
         for (let index = 0; index < ary.length; index++) {
             var str = ary[index].replace(/\s/g, '');
             if (str!='') {
@@ -97,7 +94,7 @@ window.addEventListener('DOMContentLoaded', function() {
                             if (filtered[index+1]) {
                                 var query = ".branch" + String(ulIdx) + " .d";
                                 allDiamonds = document.querySelectorAll(query);
-                                addProcess(x=0,baseline=elementLaneInfo[index],filtered[index+1],status=status);
+                                addProcess(x=0,baseline=elementLaneInfo[index],filtered[index+1],status=status,id=index);
                             }
                             // addLine();
                             filtered[index+1] = '';
@@ -161,19 +158,19 @@ window.addEventListener('DOMContentLoaded', function() {
                         //process
                         if (filtered[index] && status == 0) {
                             // if (elementLaneInfo[index] == h) {
-                                addProcess(x=0,baseline=elementLaneInfo[index],filtered[index],status=0);
+                                addProcess(x=0,baseline=elementLaneInfo[index],filtered[index],status=0,id=index);
                             // }
                         }
 
                         if (filtered[index] && status == 1) {
                             // if (elementLaneInfo[index] == h) {
-                                addProcess(x=0,baseline=elementLaneInfo[index],filtered[index],status=1);
+                                addProcess(x=0,baseline=elementLaneInfo[index],filtered[index],status=1,id=index);
                             // }
                         }
 
                         if (filtered[index] && status == 2) {
                             // if (elementLaneInfo[index] == h+1) {
-                                addProcess(x=0,baseline=elementLaneInfo[index],filtered[index],status=2);
+                                addProcess(x=0,baseline=elementLaneInfo[index],filtered[index],status=2,id=index);
                             // }
                         }               
                         break;
@@ -231,8 +228,10 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log(baseUlIdx);
     }
 
-    function addProcess(x=0,baseline=0,body='',status=0) {
+    function addProcess(x=0,baseline=0,body='',status=0,id = 0) {
         // var theBranchUL = document.querySelectorAll(".branch"+ ulIdx-1 +" ul");
+        console.log(id);
+        console.log("index");
         var query = ".branch" + String(baseline) + " ul";
         var theBranchUL = document.querySelector(query);
         var isFirstElment = false;
@@ -250,10 +249,10 @@ window.addEventListener('DOMContentLoaded', function() {
             if (baseline > 0) {
                 if (isFirstElment) {
                     li.setAttribute("class", "abs"); 
-                    li.innerHTML = '<p class="process">'+`${body}`+'</p>';
+                    li.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a>';
                 }else{
                     li.setAttribute("class", "abs"); 
-                    li.innerHTML = '<p class="process">'+`${body}`+'</p><div class="arrow"></div>';
+                    li.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a><div class="arrow"></div>';
                 }
 
                 var query0 = ".branch" + String(baseline) + " ul";
@@ -277,9 +276,9 @@ window.addEventListener('DOMContentLoaded', function() {
                 theBranchUL.appendChild(liLine);  
             }else{
                 if (isFirstElment) {
-                    li.innerHTML = '<p class="process">'+`${body}`+'</p>';
+                    li.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a>';
                 }else{
-                    li.innerHTML = '<p class="process">'+`${body}`+'</p><div class="arrow"></div>';
+                    li.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a><div class="arrow"></div>';
                 }
                 
                 theBranchUL.appendChild(li);
@@ -297,7 +296,7 @@ window.addEventListener('DOMContentLoaded', function() {
         
             var li = document.createElement("li");
             li.setAttribute("class", "abs"); 
-            li.innerHTML = '<p class="process">'+`${body}`+'</p><div class="arrow"></div>';
+            li.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a><div class="arrow"></div>';
             var query0 = ".branch" + String(baseline) + " ul";
             var elses = document.querySelector(query0);
             var last = elses;
@@ -336,9 +335,9 @@ window.addEventListener('DOMContentLoaded', function() {
 
             var li3 = document.createElement("li");
             li3.setAttribute("class", "abs"); 
-            li3.innerHTML = '<p class="process">'+`${body}`+'</p><div class="arrow-down"></div>';
+            li3.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a><div class="arrow-down"></div>';
 
-          
+        
             // var val = plis.length * 220.0 + (allDiamonds.length-1) * 220.0 + (liHalfs.length-1) * 110.0; 
             li3.style.left=`${parsed - 110.0 - 110.0}px`;//minus half line minus diamondhalf    
             theBranchUL.appendChild(li3);
@@ -347,7 +346,7 @@ window.addEventListener('DOMContentLoaded', function() {
             baseline -= 1;
             var li = document.createElement("li");
             li.setAttribute("class", "abs"); 
-            li.innerHTML = '<p class="process">'+`${body}`+'</p><div class="arrow-down"></div>';
+            li.innerHTML = '<p class="process">'+`${body}`+'</p><a href="./chart.html">document : none</a><div class="arrow-down"></div>';
 
             var query2 = ".branch" + String(baseline) + " .half";
             liHalfs = document.querySelectorAll(query2);
@@ -360,10 +359,6 @@ window.addEventListener('DOMContentLoaded', function() {
 
             var query5 = ".branch" + String(baseline) + " .line";
             lis = document.querySelectorAll(query5);
-            // if (x!=0) {
-            //     x -= 90;
-            //     li.style.left=`${x}px`;    
-            // }
             var val = plis.length * 220.0 + (allDiamonds.length-1) * 220.0 + (liHalfs.length-1) * 110.0; 
             li.style.left=`${val}px`;    
             theBranchUL.appendChild(li);

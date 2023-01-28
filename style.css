@@ -80,7 +80,11 @@ html,body{
     display: inline-block;
     border: solid 1px gainsboro;
     border-radius: 5px;
-    background-color: white;
+    /* background-color: white; */
+}
+
+a{
+    position: relative;
 }
 
 .ifel{
