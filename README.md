@@ -1,2 +1,2 @@
 # freeflowchart
-LISENCE:MIT
+LICENSE:MIT
