@@ -33,13 +33,8 @@ function getValue(data){
     rwList = [];
 
     for(let key of Object.values(data)){
-        // console.log(str);
-        //todo if special symbols[,{} ()]
-
         if (reservedWordsList.includes(token.replace('<>','').replace(/\s+/g,''))) {
             newtoken = token.replace(/\s/g, '').replace('<>','');
-            // newtoken = token.replace('<>','').replace(/\s+/g,'X');
-
             console.log(newtoken);
             //TODO
             if (newtoken == 'if') {
@@ -85,7 +80,6 @@ function getValue(data){
                 token ='';
             }
 
-
             if (newtoken == 'then'){
                 tokenList.push(newtoken);
                 token = '';
@@ -95,26 +89,17 @@ function getValue(data){
                 tokenList.push(newtoken);
                 token = '';
            }
-
-           
-           
-    
-            
         }
 
         token = token.concat('',key);
         readChars = readChars.concat('',key);
 
         if(token.includes('<>')){
-            //<'br'> not working 
-                //what should i do?
-            // console.log(token.replace(/\s/g, '').replace('<>',''));
             token = token.replace('<>','');
             tokenList.push(token);
             token ='';
         }
         
-
     }
     console.log(tokenList);
     console.log(readChars);
@@ -122,15 +107,9 @@ function getValue(data){
     window.location.href = './chart.html';
 }
 
-
 window.onload = function() {
     ta = document.querySelector("#ta");
     ta2 = document.querySelector("#ta2");
-    
-    // your code 
-    console.log('welcome back');
-
-
-    
+    console.log('welcome back'); 
 };
 

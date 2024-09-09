@@ -1,27 +1,7 @@
 window.addEventListener('DOMContentLoaded', function() {
     console.log('DOM is loaded')
-
-    // var addProcessBtn = document.querySelector('#addprocess');
-    // var addBranchBtn = document.querySelector('#addbranch');
-    // var addIfelseBtn = document.querySelector('#addif');
-    // var addLineBtn = document.querySelector('#addline');
-    // var addLaneBtn = document.querySelector('#addlane');
-    // var substractLaneBtn = document.querySelector('#substractlane');
     var mainUL = document.querySelector('#main');
     var ulIdx = 0;
-    
-    // addProcessBtn.addEventListener("click", ()=>{ addProcess();});
-    // addLineBtn.addEventListener("click", ()=>{ addLine();});
-    // addLaneBtn.addEventListener("click", ()=>{ addLane();});
-    // substractLaneBtn.addEventListener("click", ()=>{ substractLane();});
-    // addBranchBtn.addEventListener("click", ()=>{
-    //     addBranch();
-    // });
-    // addIfelseBtn.addEventListener("click", ()=>{ addIfelse(x=90);});
-    // addIfelseBtn.addEventListener("click", ()=>{ addIfelse(x=0);});
-
-    //
-    //
     var ta = null;
     var str = '';
     var elementLaneInfo = [];
@@ -205,8 +185,6 @@ window.addEventListener('DOMContentLoaded', function() {
     function addLine(x=0,baseline=0,status=0) {
         var query = ".branch" + String(baseline) + " ul";
         var theBranchUL = document.querySelector(query);
-       
-
         var li2 = document.createElement("li");
         li2.setAttribute("class", "half");
         li2.innerHTML = '<div class="line"></div>';
@@ -251,16 +229,6 @@ window.addEventListener('DOMContentLoaded', function() {
                     });
         }
       })
-    // this.document.addEventListener('click', function(event) {
-    //     if (event.currentTarget.id == null) {
-    //         var modals = document.querySelectorAll(".modal");
-    //         modals.forEach(element => {
-    //             if (!element.classList.contains("none")) {
-    //                 element.classList.add("none");     
-    //             }
-    //         });
-    //     }
-    // });
   
     function addProcess(x=0,baseline=0,body='',status=0,id = 0) {
         // var theBranchUL = document.querySelectorAll(".branch"+ ulIdx-1 +" ul");
