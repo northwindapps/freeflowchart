@@ -262,3 +262,34 @@ li.half div {
     right: 65px;
     bottom: 75px;
 }
+
+/* --- connection dots --- */
+.conn-dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #4a9eff;
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.15s;
+    cursor: crosshair;
+    z-index: 100;
+    pointer-events: all;
+}
+
+p.process:hover .conn-dot,
+li.d:hover .conn-dot,
+.endflow:hover .conn-dot {
+    opacity: 1;
+}
+
+.conn-dot.conn-active {
+    opacity: 1 !important;
+    background: #ff6b35;
+    box-shadow: 0 0 6px rgba(255, 107, 53, 0.6);
+}
+
+.conn-dot-top    { top: -4px;    left: calc(50% - 4px); }
+.conn-dot-bottom { bottom: -4px; left: calc(50% - 4px); }
+.conn-dot-left   { left: -4px;   top: calc(50% - 4px); }
+.conn-dot-right  { right: -4px;  top: calc(50% - 4px); }
