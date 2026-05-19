@@ -203,8 +203,9 @@ ul{
 }
 
 ul#main{
-    display: table;
+    display: block;
     padding: 20px;
+    position: relative;
 }
 
 li{
