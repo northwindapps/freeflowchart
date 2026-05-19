@@ -12,11 +12,29 @@
     <script src="./connect.js"></script>
 </head>
 
-<body>
-   
+<body data-mode="move">
 
+    <div class="toolbar">
+        <button class="tool-btn active" id="btn-move">&#9654; Move</button>
+        <button class="tool-btn" id="btn-connect">&#9135; Connect</button>
+    </div>
 
-      
+    <script>
+        (function() {
+            var body = document.body;
+            document.getElementById('btn-move').addEventListener('click', function() {
+                body.dataset.mode = 'move';
+                document.getElementById('btn-move').classList.add('active');
+                document.getElementById('btn-connect').classList.remove('active');
+            });
+            document.getElementById('btn-connect').addEventListener('click', function() {
+                body.dataset.mode = 'connect';
+                document.getElementById('btn-connect').classList.add('active');
+                document.getElementById('btn-move').classList.remove('active');
+            });
+        })();
+    </script>
+
     <div class="foo">
         <ul id="main">
         

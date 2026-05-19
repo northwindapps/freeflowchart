@@ -1,6 +1,6 @@
 (function () {
     var svg, connections = [], pendingFrom = null;
-    var mouseX = 0, mouseY = 0, tempLine = null;
+    var mouseX = 0, mouseY = 0, tempPath = null;
 
     window.addEventListener('DOMContentLoaded', function () {
         setupSVG();
@@ -75,22 +75,21 @@
             dot.style.opacity = '1';
             dot.style.background = '#ff6b35';
             dot.style.boxShadow = '0 0 6px rgba(255,107,53,0.6)';
-            tempLine = makeLine(0, 0, 0, 0, true);
-            svg.appendChild(tempLine);
+            tempPath = makePath(true);
+            svg.appendChild(tempPath);
         } else {
             if (pendingFrom.el === el) { clearPending(); return; }
-            var line = makeLine(0, 0, 0, 0, false);
-            svg.appendChild(line);
+            var path = makePath(false);
+            svg.appendChild(path);
 
-            var conn = { from: pendingFrom.el, fromSide: pendingFrom.side, to: el, toSide: side, line: line };
+            var conn = { from: pendingFrom.el, fromSide: pendingFrom.side, to: el, toSide: side, path: path };
             connections.push(conn);
 
-            // right-click the line to delete it
-            line.style.pointerEvents = 'stroke';
-            line.addEventListener('contextmenu', function (e) {
+            path.style.pointerEvents = 'stroke';
+            path.addEventListener('contextmenu', function (e) {
                 e.preventDefault();
-                svg.removeChild(line);
-                connections = connections.filter(function (c) { return c.line !== line; });
+                svg.removeChild(path);
+                connections = connections.filter(function (c) { return c.path !== path; });
             });
 
             clearPending();
@@ -104,18 +103,35 @@
             pendingFrom.dot.style.boxShadow = '';
             pendingFrom = null;
         }
-        if (tempLine) { svg.removeChild(tempLine); tempLine = null; }
+        if (tempPath) { svg.removeChild(tempPath); tempPath = null; }
     }
 
-    function makeLine(x1, y1, x2, y2, dashed) {
-        var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-        line.setAttribute('stroke', dashed ? '#888' : '#aaa');
-        line.setAttribute('stroke-width', '1.5');
-        line.setAttribute('x1', x1); line.setAttribute('y1', y1);
-        line.setAttribute('x2', x2); line.setAttribute('y2', y2);
-        if (dashed) line.setAttribute('stroke-dasharray', '5,4');
-        line.setAttribute('marker-end', dashed ? 'url(#arr-temp)' : 'url(#arr)');
-        return line;
+    function makePath(dashed) {
+        var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('fill', 'none');
+        path.setAttribute('stroke', dashed ? '#888' : '#aaa');
+        path.setAttribute('stroke-width', '1.5');
+        if (dashed) path.setAttribute('stroke-dasharray', '5,4');
+        path.setAttribute('marker-end', dashed ? 'url(#arr-temp)' : 'url(#arr)');
+        return path;
+    }
+
+    function bezierD(x1, y1, side1, x2, y2, side2) {
+        var dist = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+        var cp = Math.max(50, dist * 0.45);
+
+        var cx1 = x1, cy1 = y1, cx2 = x2, cy2 = y2;
+        if (side1 === 'right')  cx1 = x1 + cp;
+        if (side1 === 'left')   cx1 = x1 - cp;
+        if (side1 === 'bottom') cy1 = y1 + cp;
+        if (side1 === 'top')    cy1 = y1 - cp;
+
+        if (side2 === 'left')   cx2 = x2 - cp;
+        if (side2 === 'right')  cx2 = x2 + cp;
+        if (side2 === 'top')    cy2 = y2 - cp;
+        if (side2 === 'bottom') cy2 = y2 + cp;
+
+        return 'M ' + x1 + ',' + y1 + ' C ' + cx1 + ',' + cy1 + ' ' + cx2 + ',' + cy2 + ' ' + x2 + ',' + y2;
     }
 
     function edgePt(el, side) {
@@ -130,13 +146,11 @@
         connections.forEach(function (c) {
             var p1 = edgePt(c.from, c.fromSide);
             var p2 = edgePt(c.to, c.toSide);
-            c.line.setAttribute('x1', p1[0]); c.line.setAttribute('y1', p1[1]);
-            c.line.setAttribute('x2', p2[0]); c.line.setAttribute('y2', p2[1]);
+            c.path.setAttribute('d', bezierD(p1[0], p1[1], c.fromSide, p2[0], p2[1], c.toSide));
         });
-        if (pendingFrom && tempLine) {
+        if (pendingFrom && tempPath) {
             var p1 = edgePt(pendingFrom.el, pendingFrom.side);
-            tempLine.setAttribute('x1', p1[0]); tempLine.setAttribute('y1', p1[1]);
-            tempLine.setAttribute('x2', mouseX); tempLine.setAttribute('y2', mouseY);
+            tempPath.setAttribute('d', bezierD(p1[0], p1[1], pendingFrom.side, mouseX, mouseY, null));
         }
         requestAnimationFrame(tick);
     }

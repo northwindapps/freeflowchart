@@ -263,6 +263,48 @@ li.half div {
     bottom: 75px;
 }
 
+/* --- toolbar --- */
+.toolbar {
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 1000;
+    display: flex;
+    gap: 6px;
+}
+
+.tool-btn {
+    padding: 6px 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.tool-btn.active {
+    background: #4a9eff;
+    color: white;
+    border-color: #4a9eff;
+}
+
+/* hide dots in move mode */
+[data-mode="move"] .conn-dot {
+    display: none !important;
+}
+
+/* show all dots at once in connect mode */
+[data-mode="connect"] .conn-dot {
+    opacity: 0.4;
+}
+
+[data-mode="connect"] p.process:hover .conn-dot,
+[data-mode="connect"] li.d:hover .conn-dot,
+[data-mode="connect"] .endflow:hover .conn-dot {
+    opacity: 1;
+    transform: scale(1.4);
+}
+
 /* --- connection dots --- */
 .conn-dot {
     position: absolute;
@@ -271,7 +313,7 @@ li.half div {
     background: #4a9eff;
     border-radius: 50%;
     opacity: 0;
-    transition: opacity 0.15s;
+    transition: opacity 0.15s, transform 0.15s;
     cursor: crosshair;
     z-index: 100;
     pointer-events: all;
@@ -293,3 +335,9 @@ li.d:hover .conn-dot,
 .conn-dot-bottom { bottom: -4px; left: calc(50% - 4px); }
 .conn-dot-left   { left: -4px;   top: calc(50% - 4px); }
 .conn-dot-right  { right: -4px;  top: calc(50% - 4px); }
+
+/* align dots to the actual visual diamond corners */
+li.d .conn-dot-top    { top: 81px;  bottom: auto; }
+li.d .conn-dot-bottom { top: 212px; bottom: auto; }
+li.d .conn-dot-left   { top: 146px; }
+li.d .conn-dot-right  { top: 146px; }

@@ -22,6 +22,7 @@ function makeDraggable(el) {
     var startX, startY, startLeft, startTop, didMove;
 
     el.addEventListener('pointerdown', function(e) {
+        if (document.body.dataset.mode === 'connect') return;
         if (e.target.closest('.modal') || e.target.tagName === 'INPUT') return;
 
         if (getComputedStyle(el).position !== 'absolute') {
