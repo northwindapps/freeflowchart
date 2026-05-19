@@ -5,6 +5,7 @@
     window.addEventListener('DOMContentLoaded', function () {
         setupSVG();
         setupNodes();
+        drawAutoConns();
         requestAnimationFrame(tick);
     });
 
@@ -50,6 +51,29 @@
         document.querySelectorAll('p.process').forEach(addDots);
         document.querySelectorAll('li.d').forEach(addDots);
         document.querySelectorAll('div.endflow').forEach(addDots);
+    }
+
+    function getConnEl(id) {
+        var li = document.getElementById(String(id));
+        if (!li) return null;
+        if (li.classList.contains('d')) return li;
+        var proc = li.querySelector('p.process');
+        if (proc) return proc;
+        var ef = li.querySelector('div.endflow');
+        if (ef) return ef;
+        return li;
+    }
+
+    function drawAutoConns() {
+        var list = window._autoConns || [];
+        list.forEach(function (c) {
+            var fromEl = getConnEl(c.fromId);
+            var toEl   = getConnEl(c.toId);
+            if (!fromEl || !toEl) return;
+            var path = makePath(false);
+            svg.appendChild(path);
+            connections.push({ from: fromEl, fromSide: c.fromSide, to: toEl, toSide: c.toSide, path: path });
+        });
     }
 
     function addDots(el) {

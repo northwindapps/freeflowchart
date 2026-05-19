@@ -5,13 +5,29 @@ window.addEventListener('DOMContentLoaded', function () {
 
     var NODE_W = 220, H_GAP = 100, ROW_H = 320;
     var curX = {};
-    var autoConns = [], lastNodeId = {}, lastDiamondId = {}, pendingBranch = null;
+    var autoConns = [], lastNodeId = {}, lastDiamondId = {};
+    var pendingBranch = null;
+    var pendingExits = [];        // explicit endif/endelse exits → drain on any node
+    var pendingExitsStack = [];   // stack for saving pendingExits across else-branches
+    var pendingNoPathExits = [];  // implicit-endif diamond "no" exits → drain on very next node
+    var diamondHadElse = {};      // diamondId -> true when an else was seen for it
 
     function gx(L) { return curX[L] || 0; }
     function gy(L) { return L * ROW_H; }
     function advance(L) { curX[L] = gx(L) + NODE_W + H_GAP; }
 
     function connectToPrev(L, id) {
+        // Diamond "no" chain exits: drain onto the very next node (connects chained ifs)
+        pendingNoPathExits.forEach(function (ex) {
+            autoConns.push({ fromId: ex.fromId, fromSide: ex.fromSide, toId: id, toSide: 'left' });
+        });
+        pendingNoPathExits = [];
+
+        pendingExits.forEach(function (ex) {
+            autoConns.push({ fromId: ex.fromId, fromSide: ex.fromSide, toId: id, toSide: 'left' });
+        });
+        pendingExits = [];
+
         if (pendingBranch) {
             autoConns.push({ fromId: pendingBranch.fromId, fromSide: pendingBranch.fromSide, toId: id, toSide: pendingBranch.toSide });
             pendingBranch = null;
@@ -50,17 +66,61 @@ window.addEventListener('DOMContentLoaded', function () {
                     pendingBranch = { fromId: lastDiamondId[L - 1], fromSide: 'bottom', toSide: 'top' };
                 break;
             case 'else':
-                if (lastDiamondId[L - 1] !== undefined)
+                if (lastDiamondId[L - 1] !== undefined) {
+                    diamondHadElse[lastDiamondId[L - 1]] = true;
                     pendingBranch = { fromId: lastDiamondId[L - 1], fromSide: 'right', toSide: 'left' };
+                }
+                // Save then-exits so else-branch nodes don't drain them
+                pendingExitsStack.push(pendingExits);
+                pendingExits = [];
                 break;
-            case 'endthen':
-            case 'endelse':
+            case 'endthen': {
+                var thenExitId = lastNodeId[L + 1];
+                if (thenExitId !== undefined) {
+                    lastNodeId[L + 1] = undefined;
+                    // Peek at next meaningful token
+                    var nextTok = null;
+                    for (var j = i + 1; j < tokens.length; j++) {
+                        if (tokens[j] && tokens[j].trim()) { nextTok = tokens[j]; break; }
+                    }
+                    if (nextTok === 'else') {
+                        // else follows: then-exit reconnects at post-endif node
+                        pendingExits.push({ fromId: thenExitId, fromSide: 'right' });
+                    } else {
+                        // No else: yes-branch is a dead end; only diamond "no" path continues
+                        var dId2 = lastDiamondId[L];
+                        if (dId2 !== undefined) {
+                            pendingNoPathExits.push({ fromId: dId2, fromSide: 'right' });
+                            delete lastDiamondId[L];
+                        }
+                        lastNodeId[L] = undefined;
+                        curX[L] = Math.max(gx(L), gx(L + 1) || 0);
+                    }
+                }
                 pendingBranch = null;
                 break;
-            case 'endif':
+            }
+            case 'endelse':
+                if (lastNodeId[L + 1] !== undefined) {
+                    pendingExits.push({ fromId: lastNodeId[L + 1], fromSide: 'right' });
+                    lastNodeId[L + 1] = undefined;
+                }
+                // Merge saved then-exits back so both branches connect to post-endif node
+                pendingExits = pendingExits.concat(pendingExitsStack.pop() || []);
+                pendingBranch = null;
+                break;
+            case 'endif': {
+                var dId = lastDiamondId[L];
+                // If no else branch, the diamond's right (no-path) also exits to next node
+                if (dId !== undefined && !diamondHadElse[dId]) {
+                    pendingExits.push({ fromId: dId, fromSide: 'right' });
+                }
+                delete diamondHadElse[dId];
+                lastNodeId[L] = undefined;
                 pendingBranch = null;
                 curX[L] = Math.max(gx(L), gx(L + 1) || 0);
                 break;
+            }
             case 'endflow':
                 mkEndflow(L, gx(L), i);
                 advance(L);
