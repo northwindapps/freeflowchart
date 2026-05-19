@@ -136,6 +136,12 @@
 
     function edgePt(el, side) {
         var r = el.getBoundingClientRect();
+        if (el.classList && el.classList.contains('d')) {
+            if (side === 'top')    return [r.left + r.width / 2, r.top + 85];
+            if (side === 'bottom') return [r.left + r.width / 2, r.top + 216];
+            if (side === 'left')   return [r.left,  r.top + 150];
+            if (side === 'right')  return [r.right, r.top + 150];
+        }
         if (side === 'top')    return [r.left + r.width / 2,  r.top];
         if (side === 'bottom') return [r.left + r.width / 2,  r.bottom];
         if (side === 'left')   return [r.left,                r.top + r.height / 2];
