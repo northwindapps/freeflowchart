@@ -68,7 +68,7 @@ window.addEventListener('DOMContentLoaded', function () {
             case 'else':
                 if (lastDiamondId[L - 1] !== undefined) {
                     diamondHadElse[lastDiamondId[L - 1]] = true;
-                    pendingBranch = { fromId: lastDiamondId[L - 1], fromSide: 'right', toSide: 'left' };
+                    pendingBranch = { fromId: lastDiamondId[L - 1], fromSide: 'bottom', toSide: 'top' };
                 }
                 // Save then-exits so else-branch nodes don't drain them
                 pendingExitsStack.push(pendingExits);
@@ -176,6 +176,7 @@ window.addEventListener('DOMContentLoaded', function () {
         li.innerHTML = '<div class="endflow"></div>';
         place(li, L, px);
         connectToPrev(L, id);
+        lastNodeId[L] = undefined;
     }
 
     function makeHandler(id) {
