@@ -161,10 +161,11 @@
     function edgePt(el, side) {
         var r = el.getBoundingClientRect();
         if (el.classList && el.classList.contains('d')) {
-            if (side === 'top')    return [r.left + r.width / 2, r.top + 85];
-            if (side === 'bottom') return [r.left + r.width / 2, r.top + 216];
-            if (side === 'left')   return [r.left,  r.top + 150];
-            if (side === 'right')  return [r.right, r.top + 150];
+            var sc = r.height / 320;
+            if (side === 'top')    return [r.left + r.width / 2, r.top + 85  * sc];
+            if (side === 'bottom') return [r.left + r.width / 2, r.top + 216 * sc];
+            if (side === 'left')   return [r.left,  r.top + 150 * sc];
+            if (side === 'right')  return [r.right, r.top + 150 * sc];
         }
         if (side === 'top')    return [r.left + r.width / 2,  r.top];
         if (side === 'bottom') return [r.left + r.width / 2,  r.bottom];
@@ -173,14 +174,17 @@
     }
 
     function tick() {
+        var sw = 1.5 * (window._chartScale || 1);
         connections.forEach(function (c) {
             var p1 = edgePt(c.from, c.fromSide);
             var p2 = edgePt(c.to, c.toSide);
             c.path.setAttribute('d', bezierD(p1[0], p1[1], c.fromSide, p2[0], p2[1], c.toSide));
+            c.path.setAttribute('stroke-width', sw);
         });
         if (pendingFrom && tempPath) {
             var p1 = edgePt(pendingFrom.el, pendingFrom.side);
             tempPath.setAttribute('d', bezierD(p1[0], p1[1], pendingFrom.side, mouseX, mouseY, null));
+            tempPath.setAttribute('stroke-width', sw);
         }
         requestAnimationFrame(tick);
     }
