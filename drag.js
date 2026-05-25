@@ -23,7 +23,7 @@ function makeDraggable(el) {
 
     el.addEventListener('pointerdown', function(e) {
         if (document.body.dataset.mode === 'connect') return;
-        if (e.target.closest('.modal') || e.target.tagName === 'INPUT') return;
+        if (e.target.closest('.modal') || e.target.tagName === 'INPUT' || e.target.isContentEditable) return;
 
         if (getComputedStyle(el).position !== 'absolute') {
             var savedLeft = el.offsetLeft;
@@ -45,8 +45,9 @@ function makeDraggable(el) {
 
     el.addEventListener('pointermove', function(e) {
         if (!el.hasPointerCapture(e.pointerId)) return;
-        var dx = e.clientX - startX;
-        var dy = e.clientY - startY;
+        var sc = window._chartScale || 1;
+        var dx = (e.clientX - startX) / sc;
+        var dy = (e.clientY - startY) / sc;
         if (Math.abs(dx) > 3 || Math.abs(dy) > 3) didMove = true;
         el.style.left = (startLeft + dx) + 'px';
         el.style.top = (startTop + dy) + 'px';

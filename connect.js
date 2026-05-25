@@ -188,4 +188,16 @@
         }
         requestAnimationFrame(tick);
     }
+
+    window._addConnNode = addDots;
+
+    window._removeConnsFor = function (el) {
+        connections = connections.filter(function (c) {
+            if (c.from === el || c.to === el) {
+                if (c.path.parentNode) svg.removeChild(c.path);
+                return false;
+            }
+            return true;
+        });
+    };
 })();

@@ -221,7 +221,7 @@ li.half {
     text-align: center;
 }
 
-li.half div {
+li.half div.endflow {
     width: 110px;
     text-align: center;
 }
