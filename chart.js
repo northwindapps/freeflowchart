@@ -129,7 +129,14 @@ window.addEventListener('DOMContentLoaded', function () {
             case 'none':
                 break;
             default:
-                if (tok.trim()) { mkProcess(L, gx(L), tok.trim(), i); advance(L); }
+                if (tok.trim()) {
+                    var trimmed = tok.trim();
+                    var um = trimmed.match(/^(.*?)\s*\(([^)]*)\)\s*$/);
+                    var nodeLabel = um ? um[1].trim() : trimmed;
+                    var nodeUrl   = um ? um[2].trim() : '';
+                    mkProcDoc(L, gx(L), nodeLabel, nodeUrl, i);
+                    advance(L);
+                }
         }
     }
 
@@ -154,6 +161,23 @@ window.addEventListener('DOMContentLoaded', function () {
             '<br></div>';
         place(li, L, px);
         li.addEventListener('click', makeHandler(id));
+        connectToPrev(L, id);
+    }
+
+    function mkProcDoc(L, px, label, url, id) {
+        var li = document.createElement('li');
+        li.id = id;
+        li.innerHTML =
+            '<div class="proc-doc">' +
+            '<span class="proc-doc-label">' + label + '</span>' +
+            '<input type="text" class="proc-doc-url" placeholder="none">' +
+            '</div>';
+        place(li, L, px);
+        var urlInput = li.querySelector('.proc-doc-url');
+        if (url) urlInput.value = url;
+        urlInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && this.value.trim()) window.open(this.value.trim(), '_blank');
+        });
         connectToPrev(L, id);
     }
 

@@ -264,6 +264,43 @@ li.half div.endflow {
     bottom: 75px;
 }
 
+/* --- process+link node --- */
+.proc-doc {
+    position: relative;
+    top: 80px;
+    width: 220px;
+    height: 140px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #4a9eff;
+    border-radius: 5px;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+.proc-doc-label {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 8px;
+    text-align: center;
+}
+.proc-doc-url {
+    border: none;
+    border-top: 1px solid #c0d8ff;
+    background: #f0f6ff;
+    padding: 5px 8px;
+    font-size: 11px;
+    width: 100%;
+    outline: none;
+    box-sizing: border-box;
+    color: #333;
+}
+.proc-doc-url:focus { background: #e6f0ff; }
+[data-mode="connect"] .proc-doc:hover .conn-dot { opacity: 1; transform: scale(1.4); }
+[data-mode="connect"] .proc-doc .conn-dot        { opacity: 0.4; }
+.proc-doc:hover .conn-dot                        { opacity: 1; }
+
 /* --- toolbar --- */
 .toolbar {
     position: fixed;

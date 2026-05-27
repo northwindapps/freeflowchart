@@ -51,6 +51,7 @@
         document.querySelectorAll('p.process').forEach(addDots);
         document.querySelectorAll('li.d').forEach(addDots);
         document.querySelectorAll('div.endflow').forEach(addDots);
+        document.querySelectorAll('.proc-doc').forEach(addDots);
     }
 
     function getConnEl(id) {
@@ -61,6 +62,8 @@
         if (proc) return proc;
         var ef = li.querySelector('div.endflow');
         if (ef) return ef;
+        var pd = li.querySelector('.proc-doc');
+        if (pd) return pd;
         return li;
     }
 
@@ -190,6 +193,7 @@
     }
 
     window._addConnNode = addDots;
+    window._getConnections = function () { return connections.slice(); };
 
     window._removeConnsFor = function (el) {
         connections = connections.filter(function (c) {

@@ -106,6 +106,19 @@
             <input type="range" id="scale-slider" min="0.1" max="1.0" step="0.05" value="1.0" style="width:100px;vertical-align:middle;">
             <span id="scale-label" style="font-size:12px;margin-left:4px;">100%</span>
         </label>
+        <button class="tool-btn" id="btn-save">&#128190; Save</button>
+    </div>
+
+    <div id="save-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:6000;align-items:center;justify-content:center;">
+        <div style="background:white;border-radius:8px;padding:20px;width:540px;max-height:80vh;display:flex;flex-direction:column;gap:10px;box-shadow:0 8px 30px rgba(0,0,0,0.25);">
+            <strong style="font-size:14px;">Export DSL</strong>
+            <textarea id="save-ta" spellcheck="false" style="flex:1;min-height:320px;font-family:monospace;font-size:12px;border:1px solid #ccc;border-radius:4px;padding:8px;resize:vertical;"></textarea>
+            <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <button id="save-copy-btn" style="padding:5px 14px;border:1px solid #ccc;border-radius:4px;cursor:pointer;">Copy</button>
+                <button id="save-dl-btn" style="padding:5px 14px;border:1px solid #ccc;border-radius:4px;cursor:pointer;">Download .txt</button>
+                <button id="save-close-btn" style="padding:5px 14px;border:1px solid #ccc;border-radius:4px;cursor:pointer;">Close</button>
+            </div>
+        </div>
     </div>
 
     <div class="canvas-wrap">
@@ -323,6 +336,147 @@
             });
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape') hideMenu();
+            });
+
+            // --- save / export ---
+            function nodeIdOf(el) {
+                if (!el) return null;
+                var li = el.closest('li');
+                return li ? li.id : null;
+            }
+
+            function buildDSL() {
+                var main = document.getElementById('main');
+                var nodeMap = {};
+
+                main.querySelectorAll(':scope > li').forEach(function (li) {
+                    var id = li.id;
+                    if (!id) return;
+                    var type, label = '', url = '';
+
+                    if (li.classList.contains('d')) {
+                        type = 'decision';
+                        var db = li.querySelector('.d-body');
+                        label = db ? db.textContent.trim() : 'Decision';
+                    } else if (li.classList.contains('ef')) {
+                        type = 'endflow';
+                    } else if (li.querySelector('.proc-doc')) {
+                        type = 'process';
+                        var pl = li.querySelector('.proc-doc-label');
+                        var pu = li.querySelector('.proc-doc-url');
+                        label = pl ? pl.textContent.trim() : '';
+                        url   = pu ? pu.value.trim() : '';
+                        if (url) label = label + ' (' + url + ')';
+                    } else if (li.querySelector('p.process')) {
+                        type = 'process';
+                        var p = li.querySelector('p.process');
+                        label = p ? p.textContent.trim() : '';
+                    } else {
+                        return;
+                    }
+
+                    nodeMap[id] = {
+                        id: id, type: type, label: label,
+                        x: parseInt(li.style.left) || 0,
+                        y: parseInt(li.style.top)  || 0
+                    };
+                });
+
+                var conns = window._getConnections ? window._getConnections() : [];
+                var outEdges = {};
+                var inDegree = {};
+
+                conns.forEach(function (c) {
+                    var fId = nodeIdOf(c.from);
+                    var tId = nodeIdOf(c.to);
+                    if (!fId || !tId || fId === tId) return;
+                    if (!outEdges[fId]) outEdges[fId] = [];
+                    outEdges[fId].push({ toId: tId, fromSide: c.fromSide });
+                    inDegree[tId] = (inDegree[tId] || 0) + 1;
+                });
+
+                var allIds = Object.keys(nodeMap);
+                function byPos(a, b) {
+                    var na = nodeMap[a], nb = nodeMap[b];
+                    return na.y !== nb.y ? na.y - nb.y : na.x - nb.x;
+                }
+                var sources = allIds.filter(function (id) { return !inDegree[id]; }).sort(byPos);
+
+                var lines = [];
+                var visited = {};
+
+                function sideRank(s) { return { bottom: 0, right: 1, top: 2, left: 3 }[s] || 4; }
+
+                function emit(id, indent) {
+                    if (visited[id]) return;
+                    visited[id] = true;
+                    var node = nodeMap[id];
+                    if (!node) return;
+                    var pad = Array(indent + 1).join(' ');
+                    var outs = (outEdges[id] || []).slice().sort(function (a, b) {
+                        return sideRank(a.fromSide) - sideRank(b.fromSide);
+                    });
+
+                    if (node.type === 'endflow') {
+                        lines.push(pad + 'endflow');
+                        return;
+                    }
+
+                    if (node.type === 'decision') {
+                        lines.push(pad + 'if ' + node.label);
+                        if (outs.length >= 2) {
+                            lines.push(pad + 'then');
+                            emit(outs[0].toId, indent + 1);
+                            lines.push(pad + 'endthen');
+                            lines.push(pad + 'else');
+                            emit(outs[1].toId, indent + 1);
+                            lines.push(pad + 'endelse');
+                        } else if (outs.length === 1) {
+                            lines.push(pad + 'then');
+                            emit(outs[0].toId, indent + 1);
+                            lines.push(pad + 'endthen');
+                        }
+                        lines.push(pad + 'endif');
+                        return;
+                    }
+
+                    lines.push(pad + node.label);
+                    outs.forEach(function (o) { emit(o.toId, indent); });
+                }
+
+                sources.forEach(function (id) { emit(id, 0); });
+                allIds.sort(byPos).forEach(function (id) { if (!visited[id]) emit(id, 0); });
+
+                return lines.join('\n');
+            }
+
+            var saveModal = document.getElementById('save-modal');
+            var saveTa    = document.getElementById('save-ta');
+
+            document.getElementById('btn-save').addEventListener('click', function () {
+                saveTa.value = buildDSL();
+                saveModal.style.display = 'flex';
+            });
+            document.getElementById('save-close-btn').addEventListener('click', function () {
+                saveModal.style.display = 'none';
+            });
+            document.getElementById('save-copy-btn').addEventListener('click', function () {
+                saveTa.select();
+                document.execCommand('copy');
+                this.textContent = 'Copied!';
+                var btn = this;
+                setTimeout(function () { btn.textContent = 'Copy'; }, 1500);
+            });
+            document.getElementById('save-dl-btn').addEventListener('click', function () {
+                var blob = new Blob([saveTa.value], { type: 'text/plain' });
+                var a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'flowchart.txt';
+                a.click();
+                URL.revokeObjectURL(a.href);
+            });
+            saveModal.addEventListener('click', function (e) {
+                if (e.target === saveModal) saveModal.style.display = 'none';
             });
         })();
     </script>
