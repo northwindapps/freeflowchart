@@ -21,6 +21,52 @@
             min-width: 3000px;
             min-height: 2000px;
         }
+
+        /* process node with built-in link field */
+        .proc-doc {
+            position: relative;
+            top: 80px;
+            width: 220px;
+            height: 140px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #4a9eff;
+            border-radius: 5px;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .proc-doc-label {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 8px;
+            text-align: center;
+            cursor: text;
+        }
+        .proc-doc-label:hover {
+            background: aquamarine;
+        }
+        .proc-doc-url {
+            border: none;
+            border-top: 1px solid #c0d8ff;
+            background: #f0f6ff;
+            padding: 5px 8px;
+            font-size: 11px;
+            width: 100%;
+            outline: none;
+            box-sizing: border-box;
+            color: #333;
+        }
+        .proc-doc-url:focus {
+            background: #e6f0ff;
+        }
+
+        /* connect-mode dot visibility for proc-doc */
+        [data-mode="connect"] .proc-doc:hover .conn-dot { opacity: 1; transform: scale(1.4); }
+        [data-mode="connect"] .proc-doc .conn-dot        { opacity: 0.4; }
+        .proc-doc:hover .conn-dot                        { opacity: 1; }
+
         .ctx-menu {
             position: fixed;
             background: white;
@@ -38,12 +84,8 @@
             cursor: pointer;
             user-select: none;
         }
-        .ctx-item:hover {
-            background: #f0f4ff;
-        }
-        .ctx-item.danger {
-            color: #c00;
-        }
+        .ctx-item:hover { background: #f0f4ff; }
+        .ctx-item.danger { color: #c00; }
         .ctx-sep {
             border: none;
             border-top: 1px solid #eee;
@@ -57,6 +99,7 @@
         <button class="tool-btn active" id="btn-move">&#9654; Move</button>
         <button class="tool-btn" id="btn-connect">&#9135; Connect</button>
         <button class="tool-btn" id="btn-add-process">&#9633; Process</button>
+        <button class="tool-btn" id="btn-add-procdoc">&#9633; Process+Link</button>
         <button class="tool-btn" id="btn-add-decision">&#9671; Decision</button>
         <button class="tool-btn" id="btn-add-endflow">&#9711; End</button>
         <label class="tool-btn" style="cursor:default;">
@@ -81,7 +124,7 @@
             var nodeSeq = 0;
             var dropX = 40, dropY = 40;
 
-            // --- toolbar ---
+            // --- toolbar mode ---
             document.getElementById('btn-move').addEventListener('click', function () {
                 body.dataset.mode = 'move';
                 this.classList.add('active');
@@ -113,7 +156,7 @@
             function placeNode(li, x, y) {
                 li.style.position = 'absolute';
                 li.style.left = x + 'px';
-                li.style.top = y + 'px';
+                li.style.top  = y + 'px';
                 document.getElementById('main').appendChild(li);
             }
 
@@ -131,7 +174,7 @@
                     el.removeEventListener('keydown', onKey);
                 }
                 function onKey(e) {
-                    if (e.key === 'Enter') { e.preventDefault(); el.blur(); }
+                    if (e.key === 'Enter')  { e.preventDefault(); el.blur(); }
                     if (e.key === 'Escape') { el.textContent = defaultText; el.blur(); }
                 }
                 el.addEventListener('blur', finish);
@@ -152,6 +195,33 @@
                 p.addEventListener('dblclick', function (e) {
                     e.stopPropagation();
                     makeEditable(p, p.textContent);
+                });
+            }
+
+            function createProcDoc(x, y) {
+                var id = makeId();
+                var li = document.createElement('li');
+                li.id = id;
+                li.innerHTML =
+                    '<div class="proc-doc">' +
+                    '<span class="proc-doc-label">Process</span>' +
+                    '<input type="text" class="proc-doc-url" placeholder="URL or file path">' +
+                    '</div>';
+                placeNode(li, x, y);
+                makeDraggable(li);
+                var box      = li.querySelector('.proc-doc');
+                var labelEl  = li.querySelector('.proc-doc-label');
+                var urlInput = li.querySelector('.proc-doc-url');
+                if (window._addConnNode) window._addConnNode(box);
+                makeEditable(labelEl, 'Process');
+                labelEl.addEventListener('dblclick', function (e) {
+                    e.stopPropagation();
+                    makeEditable(labelEl, labelEl.textContent);
+                });
+                urlInput.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' && this.value.trim()) {
+                        window.open(this.value.trim(), '_blank');
+                    }
                 });
             }
 
@@ -185,9 +255,12 @@
                 if (window._addConnNode) window._addConnNode(li.querySelector('div.endflow'));
             }
 
-            // --- toolbar add buttons ---
+            // --- toolbar buttons ---
             document.getElementById('btn-add-process').addEventListener('click', function () {
                 var pos = nextPos(); createProcess(pos[0], pos[1]);
+            });
+            document.getElementById('btn-add-procdoc').addEventListener('click', function () {
+                var pos = nextPos(); createProcDoc(pos[0], pos[1]);
             });
             document.getElementById('btn-add-decision').addEventListener('click', function () {
                 var pos = nextPos(); createDecision(pos[0], pos[1]);
@@ -197,13 +270,15 @@
             });
 
             // --- context menu ---
-            var ctxMenu = document.getElementById('ctx-menu');
+            var ctxMenu   = document.getElementById('ctx-menu');
             var ctxTarget = null;
 
             function getNodeInfo(target) {
                 if (target.classList.contains('conn-dot')) return null;
                 var proc = target.closest('p.process');
                 if (proc) return { connEl: proc, li: proc.closest('li'), type: 'process', labelEl: proc };
+                var pd = target.closest('.proc-doc');
+                if (pd) return { connEl: pd, li: pd.closest('li'), type: 'proc-doc', labelEl: pd.querySelector('.proc-doc-label') };
                 var d = target.closest('li.d');
                 if (d) return { connEl: d, li: d, type: 'decision', labelEl: d.querySelector('.d-body') };
                 var ef = target.closest('div.endflow');
@@ -212,10 +287,9 @@
             }
 
             function showMenu(x, y, info) {
-                var editItem = document.getElementById('ctx-edit');
-                editItem.style.display = info.labelEl ? '' : 'none';
-                ctxMenu.style.left = x + 'px';
-                ctxMenu.style.top = y + 'px';
+                document.getElementById('ctx-edit').style.display = info.labelEl ? '' : 'none';
+                ctxMenu.style.left    = x + 'px';
+                ctxMenu.style.top     = y + 'px';
                 ctxMenu.style.display = 'block';
             }
 
