@@ -156,7 +156,7 @@ a{
     height: 50px !important;
     background: white;
     border-radius: 50%;
-    border: solid 1px gainsboro;
+    border: solid 3px #aaa;
 }
 
 .endflow div.arrow{
