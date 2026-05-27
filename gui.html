@@ -148,6 +148,8 @@
             <span id="scale-label" style="font-size:12px;margin-left:4px;">100%</span>
         </label>
         <button class="tool-btn" id="btn-save">&#128190; Save</button>
+        <button class="tool-btn" id="btn-load">&#128194; Load</button>
+        <input type="file" id="load-file-input" accept=".txt" style="display:none;">
     </div>
 
     <div id="save-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:6000;align-items:center;justify-content:center;">
@@ -532,9 +534,20 @@
                             emit(sortedOuts[1].toId, indent + 1);
                             lines.push(pad + 'endelse');
                         } else if (sortedOuts.length === 1) {
-                            lines.push(pad + 'then');
-                            emit(sortedOuts[0].toId, indent + 1);
-                            lines.push(pad + 'endthen');
+                            var isYesPath = isIf2
+                                ? sortedOuts[0].fromSide === 'bottom'
+                                : sortedOuts[0].fromSide === 'right';
+                            if (isYesPath) {
+                                lines.push(pad + 'then');
+                                emit(sortedOuts[0].toId, indent + 1);
+                                lines.push(pad + 'endthen');
+                            } else {
+                                lines.push(pad + 'then');
+                                lines.push(pad + 'endthen');
+                                lines.push(pad + 'else');
+                                emit(sortedOuts[0].toId, indent + 1);
+                                lines.push(pad + 'endelse');
+                            }
                         }
                         lines.push(pad + 'endif');
                         return;
@@ -596,6 +609,45 @@
             });
             saveModal.addEventListener('click', function (e) {
                 if (e.target === saveModal) saveModal.style.display = 'none';
+            });
+
+            // --- load ---
+            function parseDSL(text) {
+                var reserved = ['endprocess','endthen','endelse','endflow','endif','if2','if','then','else','none'];
+                var tokens = [];
+                text.split('\n').forEach(function (line) {
+                    var t = line.trim();
+                    if (!t) return;
+                    var matched = false;
+                    for (var i = 0; i < reserved.length; i++) {
+                        var rw = reserved[i];
+                        if (t === rw) { tokens.push(rw); matched = true; break; }
+                        if (t.indexOf(rw + ' ') === 0) {
+                            tokens.push(rw);
+                            tokens.push(t.slice(rw.length + 1));
+                            matched = true;
+                            break;
+                        }
+                    }
+                    if (!matched) tokens.push(t);
+                });
+                return tokens;
+            }
+
+            document.getElementById('btn-load').addEventListener('click', function () {
+                document.getElementById('load-file-input').click();
+            });
+            document.getElementById('load-file-input').addEventListener('change', function (e) {
+                var file = e.target.files[0];
+                if (!file) return;
+                var reader = new FileReader();
+                reader.onload = function (ev) {
+                    var tokens = parseDSL(ev.target.result);
+                    sessionStorage.setItem('src', JSON.stringify(tokens));
+                    window.location.href = './chart.html';
+                };
+                reader.readAsText(file);
+                this.value = '';
             });
         })();
     </script>
