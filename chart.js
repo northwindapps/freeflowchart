@@ -3,8 +3,8 @@ window.addEventListener('DOMContentLoaded', function () {
     var values = JSON.parse(sessionStorage.getItem('src'));
     if (!values) return;
 
-    var NODE_W = 220, H_GAP = 100, ROW_H = 320;
-    var curX = {};
+    var NODE_W = 220, H_GAP = 100, ROW_H = 320, TOP_BUFFER = 200;
+    var curX = {}, laneY = {}, diamondX = {}, diamondType = {};
     var autoConns = [], lastNodeId = {}, lastDiamondId = {};
     var pendingBranch = null;
     var pendingExits = [];        // explicit endif/endelse exits → drain on any node
@@ -13,7 +13,7 @@ window.addEventListener('DOMContentLoaded', function () {
     var diamondHadElse = {};      // diamondId -> true when an else was seen for it
 
     function gx(L) { return curX[L] || 0; }
-    function gy(L) { return L * ROW_H; }
+    function gy(L) { return (laneY[L] !== undefined ? laneY[L] : L * ROW_H) + TOP_BUFFER; }
     function advance(L) { curX[L] = gx(L) + NODE_W + H_GAP; }
 
     function connectToPrev(L, id) {
@@ -56,24 +56,56 @@ window.addEventListener('DOMContentLoaded', function () {
                 var label = tokens[i + 1] || '';
                 tokens[i + 1] = null;
                 var px = gx(L);
-                if (curX[L + 1] === undefined) curX[L + 1] = px;
                 mkDiamond(L, px, label.trim(), i);
                 advance(L);
+                curX[L + 1] = gx(L);
+                if (laneY[L + 1] === undefined) laneY[L + 1] = gy(L) - TOP_BUFFER;
+                diamondX[i] = px;
+                diamondType[i] = 'if';
                 break;
             }
-            case 'then':
-                if (lastDiamondId[L - 1] !== undefined)
-                    pendingBranch = { fromId: lastDiamondId[L - 1], fromSide: 'bottom', toSide: 'top' };
+            case 'if2': {
+                var label = tokens[i + 1] || '';
+                tokens[i + 1] = null;
+                var px = gx(L);
+                mkDiamond(L, px, label.trim(), i, 'if2');
+                advance(L);
+                curX[L + 1] = px;
+                delete laneY[L + 1];
+                diamondX[i] = px;
+                diamondType[i] = 'if2';
                 break;
-            case 'else':
-                if (lastDiamondId[L - 1] !== undefined) {
-                    diamondHadElse[lastDiamondId[L - 1]] = true;
-                    pendingBranch = { fromId: lastDiamondId[L - 1], fromSide: 'bottom', toSide: 'top' };
+            }
+            case 'then': {
+                var dId = lastDiamondId[L - 1];
+                if (dId !== undefined) {
+                    if (diamondType[dId] === 'if2') {
+                        pendingBranch = { fromId: dId, fromSide: 'bottom', toSide: 'top' };
+                    } else {
+                        pendingBranch = { fromId: dId, fromSide: 'right', toSide: 'left' };
+                    }
+                }
+                break;
+            }
+            case 'else': {
+                var dId = lastDiamondId[L - 1];
+                if (dId !== undefined) {
+                    diamondHadElse[dId] = true;
+                    if (diamondType[dId] === 'if2') {
+                        pendingBranch = { fromId: dId, fromSide: 'right', toSide: 'left' };
+                        laneY[L] = gy(L - 1) - TOP_BUFFER;
+                        curX[L] = gx(L - 1);
+                    } else {
+                        pendingBranch = { fromId: dId, fromSide: 'bottom', toSide: 'top' };
+                        delete laneY[L];
+                        curX[L] = diamondX[dId] || 0;
+                    }
                 }
                 // Save then-exits so else-branch nodes don't drain them
                 pendingExitsStack.push(pendingExits);
                 pendingExits = [];
                 break;
+            }
             case 'endthen': {
                 var thenExitId = lastNodeId[L + 1];
                 if (thenExitId !== undefined) {
@@ -86,11 +118,13 @@ window.addEventListener('DOMContentLoaded', function () {
                     if (nextTok === 'else') {
                         // else follows: then-exit reconnects at post-endif node
                         pendingExits.push({ fromId: thenExitId, fromSide: 'right' });
+                        curX[L] = Math.max(gx(L), gx(L + 1) || 0);
                     } else {
                         // No else: yes-branch is a dead end; only diamond "no" path continues
                         var dId2 = lastDiamondId[L];
                         if (dId2 !== undefined) {
-                            pendingNoPathExits.push({ fromId: dId2, fromSide: 'right' });
+                            var noSide = diamondType[dId2] === 'if2' ? 'right' : 'bottom';
+                            pendingNoPathExits.push({ fromId: dId2, fromSide: noSide });
                             delete lastDiamondId[L];
                         }
                         lastNodeId[L] = undefined;
@@ -111,9 +145,10 @@ window.addEventListener('DOMContentLoaded', function () {
                 break;
             case 'endif': {
                 var dId = lastDiamondId[L];
-                // If no else branch, the diamond's right (no-path) also exits to next node
+                // If no else branch, the diamond's no-path also exits to next node
                 if (dId !== undefined && !diamondHadElse[dId]) {
-                    pendingExits.push({ fromId: dId, fromSide: 'right' });
+                    var noSide = diamondType[dId] === 'if2' ? 'right' : 'bottom';
+                    pendingExits.push({ fromId: dId, fromSide: noSide });
                 }
                 delete diamondHadElse[dId];
                 lastNodeId[L] = undefined;
@@ -131,11 +166,28 @@ window.addEventListener('DOMContentLoaded', function () {
             default:
                 if (tok.trim()) {
                     var trimmed = tok.trim();
-                    var um = trimmed.match(/^(.*?)\s*\(([^)]*)\)\s*$/);
-                    var nodeLabel = um ? um[1].trim() : trimmed;
-                    var nodeUrl   = um ? um[2].trim() : '';
-                    mkProcDoc(L, gx(L), nodeLabel, nodeUrl, i);
-                    advance(L);
+                    var fm = trimmed.match(/^(.*?)\s+<-\s+file\(([^)]*)\)\s*$/i);
+                    if (fm) {
+                        var procPart = fm[1].trim();
+                        var fileLabel = fm[2].trim();
+                        var um2 = procPart.match(/^(.*?)\s*\(([^)]*)\)\s*$/);
+                        var pLabel = um2 ? um2[1].trim() : procPart;
+                        var pUrl   = (um2 && um2[2] !== 'none') ? um2[2].trim() : '';
+                        var colX = gx(L);
+                        // Process first so connectToPrev chains prev → process
+                        mkProcDoc(L, colX, pLabel, pUrl, i);
+                        advance(L);
+                        // File placed above process: same column X, shifted up
+                        var fileId = '__f' + i;
+                        mkProcFile(L, colX, fileLabel !== 'none' ? fileLabel : '', fileId, true, gy(L) - 180);
+                        autoConns.push({ fromId: fileId, fromSide: 'bottom', toId: i, toSide: 'top' });
+                    } else {
+                        var um = trimmed.match(/^(.*?)\s*\(([^)]*)\)\s*$/);
+                        var nodeLabel = um ? um[1].trim() : trimmed;
+                        var nodeUrl   = (um && um[2] !== 'none') ? um[2].trim() : '';
+                        mkProcDoc(L, gx(L), nodeLabel, nodeUrl, i);
+                        advance(L);
+                    }
                 }
         }
     }
@@ -164,6 +216,17 @@ window.addEventListener('DOMContentLoaded', function () {
         connectToPrev(L, id);
     }
 
+    function mkProcFile(L, px, label, id, skipConn, overrideY) {
+        var li = document.createElement('li');
+        li.id = id;
+        li.innerHTML = '<div class="proc-file"><span class="proc-file-label">' + (label || '') + '</span></div>';
+        li.style.position = 'absolute';
+        li.style.left = px + 'px';
+        li.style.top = (overrideY !== undefined ? overrideY : gy(L)) + 'px';
+        mainUL.appendChild(li);
+        if (!skipConn) connectToPrev(L, id);
+    }
+
     function mkProcDoc(L, px, label, url, id) {
         var li = document.createElement('li');
         li.id = id;
@@ -181,10 +244,10 @@ window.addEventListener('DOMContentLoaded', function () {
         connectToPrev(L, id);
     }
 
-    function mkDiamond(L, px, body, id) {
+    function mkDiamond(L, px, body, id, extraClass) {
         var li = document.createElement('li');
         li.id = id;
-        li.className = 'd';
+        li.className = extraClass ? 'd ' + extraClass : 'd';
         li.innerHTML =
             '<div class="diamond"><p class="d-body">' + body + '</p></div>' +
             '<span class="y">yes</span><span class="n">no</span>';

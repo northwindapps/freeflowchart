@@ -1,7 +1,7 @@
 var ta = null;
 var ta2 = null;
 var str = '';
-var reservedWordsList = ['if','else','endif','endthen','endflow','none','then','endprocess','endelse','none'];
+var reservedWordsList = ['if','if2','else','endif','endthen','endflow','none','then','endprocess','endelse','none'];
 let tokenList = [];
 let rwList = [];
 var token = '';
@@ -33,12 +33,18 @@ function getValue(data){
     rwList = [];
 
     for(let key of Object.values(data)){
-        if (reservedWordsList.includes(token.replace('<>','').replace(/\s+/g,''))) {
+        if (key === ' ' && reservedWordsList.includes(token.replace('<>','').replace(/\s+/g,''))) {
             newtoken = token.replace(/\s/g, '').replace('<>','');
             console.log(newtoken);
             //TODO
             if (newtoken == 'if') {
                 //regular expression if there is an  else after an if?
+                tokenList.push(newtoken);
+                rwList.push(newtoken);
+                token ='';
+            }
+
+            if (newtoken == 'if2') {
                 tokenList.push(newtoken);
                 rwList.push(newtoken);
                 token ='';

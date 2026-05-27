@@ -15,6 +15,9 @@ function enableDrag() {
     document.querySelectorAll('.proc-doc').forEach(function(el) {
         makeDraggable(el.closest('li'));
     });
+    document.querySelectorAll('.proc-file').forEach(function(el) {
+        makeDraggable(el.closest('li'));
+    });
 }
 
 function makeDraggable(el) {

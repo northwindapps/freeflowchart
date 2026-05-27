@@ -62,6 +62,45 @@
             background: #e6f0ff;
         }
 
+        /* file/document node */
+        .proc-file {
+            position: relative;
+            top: 80px;
+            width: 220px;
+            height: 140px;
+            background: white;
+            border: 1px solid #888;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8px 28px 8px 8px;
+            word-break: break-word;
+            font-size: 13px;
+        }
+        .proc-file::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(225deg, #ddd 50%, white 50%);
+            border-left: 1px solid #888;
+            border-bottom: 1px solid #888;
+        }
+        .proc-file-label {
+            display: block;
+            width: 100%;
+            text-align: center;
+            cursor: text;
+        }
+        .proc-file-label:hover { background: aquamarine; }
+        [data-mode="connect"] .proc-file:hover .conn-dot { opacity: 1; transform: scale(1.4); }
+        [data-mode="connect"] .proc-file .conn-dot        { opacity: 0.4; }
+        .proc-file:hover .conn-dot                        { opacity: 1; }
+
         /* connect-mode dot visibility for proc-doc */
         [data-mode="connect"] .proc-doc:hover .conn-dot { opacity: 1; transform: scale(1.4); }
         [data-mode="connect"] .proc-doc .conn-dot        { opacity: 0.4; }
@@ -101,7 +140,9 @@
         <button class="tool-btn" id="btn-add-process">&#9633; Process</button>
         <button class="tool-btn" id="btn-add-procdoc">&#9633; Process+Link</button>
         <button class="tool-btn" id="btn-add-decision">&#9671; Decision</button>
+        <button class="tool-btn" id="btn-add-decision2">&#9671; Decision2</button>
         <button class="tool-btn" id="btn-add-endflow">&#9711; End</button>
+        <button class="tool-btn" id="btn-add-file">&#128196; File</button>
         <label class="tool-btn" style="cursor:default;">
             <input type="range" id="scale-slider" min="0.1" max="1.0" step="0.05" value="1.0" style="width:100px;vertical-align:middle;">
             <span id="scale-label" style="font-size:12px;margin-left:4px;">100%</span>
@@ -257,6 +298,42 @@
                 });
             }
 
+            function createDecision2(x, y) {
+                var id = makeId();
+                var li = document.createElement('li');
+                li.id = id;
+                li.className = 'd if2';
+                li.innerHTML =
+                    '<div class="diamond"><p class="d-body">Decision</p></div>' +
+                    '<span class="y">yes</span><span class="n">no</span>';
+                placeNode(li, x, y);
+                makeDraggable(li);
+                if (window._addConnNode) window._addConnNode(li);
+                var db = li.querySelector('.d-body');
+                makeEditable(db, 'Decision');
+                db.addEventListener('dblclick', function (e) {
+                    e.stopPropagation();
+                    makeEditable(db, db.textContent);
+                });
+            }
+
+            function createFile(x, y) {
+                var id = makeId();
+                var li = document.createElement('li');
+                li.id = id;
+                li.innerHTML = '<div class="proc-file"><span class="proc-file-label">File</span></div>';
+                placeNode(li, x, y);
+                makeDraggable(li);
+                var box     = li.querySelector('.proc-file');
+                var labelEl = li.querySelector('.proc-file-label');
+                if (window._addConnNode) window._addConnNode(box);
+                makeEditable(labelEl, 'File');
+                labelEl.addEventListener('dblclick', function (e) {
+                    e.stopPropagation();
+                    makeEditable(labelEl, labelEl.textContent);
+                });
+            }
+
             function createEndflow(x, y) {
                 var id = makeId();
                 var li = document.createElement('li');
@@ -278,8 +355,14 @@
             document.getElementById('btn-add-decision').addEventListener('click', function () {
                 var pos = nextPos(); createDecision(pos[0], pos[1]);
             });
+            document.getElementById('btn-add-decision2').addEventListener('click', function () {
+                var pos = nextPos(); createDecision2(pos[0], pos[1]);
+            });
             document.getElementById('btn-add-endflow').addEventListener('click', function () {
                 var pos = nextPos(); createEndflow(pos[0], pos[1]);
+            });
+            document.getElementById('btn-add-file').addEventListener('click', function () {
+                var pos = nextPos(); createFile(pos[0], pos[1]);
             });
 
             // --- context menu ---
@@ -293,7 +376,9 @@
                 var pd = target.closest('.proc-doc');
                 if (pd) return { connEl: pd, li: pd.closest('li'), type: 'proc-doc', labelEl: pd.querySelector('.proc-doc-label') };
                 var d = target.closest('li.d');
-                if (d) return { connEl: d, li: d, type: 'decision', labelEl: d.querySelector('.d-body') };
+                if (d) return { connEl: d, li: d, type: d.classList.contains('if2') ? 'decision2' : 'decision', labelEl: d.querySelector('.d-body') };
+                var pf = target.closest('.proc-file');
+                if (pf) return { connEl: pf, li: pf.closest('li'), type: 'file', labelEl: pf.querySelector('.proc-file-label') };
                 var ef = target.closest('div.endflow');
                 if (ef) return { connEl: ef, li: ef.closest('li'), type: 'endflow', labelEl: null };
                 return null;
@@ -355,18 +440,21 @@
                     var type, label = '', url = '';
 
                     if (li.classList.contains('d')) {
-                        type = 'decision';
+                        type = li.classList.contains('if2') ? 'decision2' : 'decision';
                         var db = li.querySelector('.d-body');
                         label = db ? db.textContent.trim() : 'Decision';
                     } else if (li.classList.contains('ef')) {
                         type = 'endflow';
+                    } else if (li.querySelector('.proc-file')) {
+                        type = 'file';
+                        var fl = li.querySelector('.proc-file-label');
+                        label = fl ? fl.textContent.trim() : '';
                     } else if (li.querySelector('.proc-doc')) {
                         type = 'process';
                         var pl = li.querySelector('.proc-doc-label');
                         var pu = li.querySelector('.proc-doc-url');
                         label = pl ? pl.textContent.trim() : '';
                         url   = pu ? pu.value.trim() : '';
-                        if (url) label = label + ' (' + url + ')';
                     } else if (li.querySelector('p.process')) {
                         type = 'process';
                         var p = li.querySelector('p.process');
@@ -376,7 +464,7 @@
                     }
 
                     nodeMap[id] = {
-                        id: id, type: type, label: label,
+                        id: id, type: type, label: label, url: url,
                         x: parseInt(li.style.left) || 0,
                         y: parseInt(li.style.top)  || 0
                     };
@@ -385,6 +473,7 @@
                 var conns = window._getConnections ? window._getConnections() : [];
                 var outEdges = {};
                 var inDegree = {};
+                var inEdgesMap = {};
 
                 conns.forEach(function (c) {
                     var fId = nodeIdOf(c.from);
@@ -393,12 +482,14 @@
                     if (!outEdges[fId]) outEdges[fId] = [];
                     outEdges[fId].push({ toId: tId, fromSide: c.fromSide });
                     inDegree[tId] = (inDegree[tId] || 0) + 1;
+                    if (!inEdgesMap[tId]) inEdgesMap[tId] = [];
+                    inEdgesMap[tId].push({ fromId: fId });
                 });
 
                 var allIds = Object.keys(nodeMap);
                 function byPos(a, b) {
                     var na = nodeMap[a], nb = nodeMap[b];
-                    return na.y !== nb.y ? na.y - nb.y : na.x - nb.x;
+                    return na.y !== nb.y ? nb.y - na.y : na.x - nb.x; // desc Y, asc X
                 }
                 var sources = allIds.filter(function (id) { return !inDegree[id]; }).sort(byPos);
 
@@ -422,25 +513,53 @@
                         return;
                     }
 
-                    if (node.type === 'decision') {
-                        lines.push(pad + 'if ' + node.label);
-                        if (outs.length >= 2) {
+                    if (node.type === 'decision' || node.type === 'decision2') {
+                        var isIf2 = node.type === 'decision2';
+                        lines.push(pad + (isIf2 ? 'if2' : 'if') + ' ' + node.label);
+                        // if: yes=right first, no=bottom second
+                        // if2: yes=bottom first, no=right second
+                        function decRank(s) {
+                            return isIf2
+                                ? ({ bottom:0, right:1, top:2, left:3 }[s] || 4)
+                                : ({ right:0, bottom:1, top:2, left:3 }[s] || 4);
+                        }
+                        var sortedOuts = outs.slice().sort(function (a, b) { return decRank(a.fromSide) - decRank(b.fromSide); });
+                        if (sortedOuts.length >= 2) {
                             lines.push(pad + 'then');
-                            emit(outs[0].toId, indent + 1);
+                            emit(sortedOuts[0].toId, indent + 1);
                             lines.push(pad + 'endthen');
                             lines.push(pad + 'else');
-                            emit(outs[1].toId, indent + 1);
+                            emit(sortedOuts[1].toId, indent + 1);
                             lines.push(pad + 'endelse');
-                        } else if (outs.length === 1) {
+                        } else if (sortedOuts.length === 1) {
                             lines.push(pad + 'then');
-                            emit(outs[0].toId, indent + 1);
+                            emit(sortedOuts[0].toId, indent + 1);
                             lines.push(pad + 'endthen');
                         }
                         lines.push(pad + 'endif');
                         return;
                     }
 
-                    lines.push(pad + node.label);
+                    if (node.type === 'file') {
+                        // Pre-visited by its connected process; if we reach here emit standalone
+                        lines.push(pad + 'file(' + (node.label || 'none') + ')');
+                        outs.forEach(function (o) { emit(o.toId, indent); });
+                        return;
+                    }
+
+                    // Process node — check incoming edges for a file node and annotate
+                    var fileAnn = '';
+                    var fileInputs = (inEdgesMap[id] || []).filter(function (e) {
+                        return nodeMap[e.fromId] && nodeMap[e.fromId].type === 'file' && !visited[e.fromId];
+                    });
+                    if (fileInputs.length > 0) {
+                        var fNode = nodeMap[fileInputs[0].fromId];
+                        visited[fNode.id] = true;
+                        fileAnn = ' <- file(' + (fNode.label || 'none') + ')';
+                    }
+
+                    var urlSuffix = node.url ? ' (' + node.url + ')' : ' (none)';
+                    lines.push(pad + node.label + urlSuffix + fileAnn);
                     outs.forEach(function (o) { emit(o.toId, indent); });
                 }
 

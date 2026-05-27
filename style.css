@@ -264,6 +264,44 @@ li.half div.endflow {
     bottom: 75px;
 }
 
+/* --- file/document node --- */
+.proc-file {
+    position: relative;
+    top: 80px;
+    width: 220px;
+    height: 140px;
+    background: white;
+    border: 1px solid #888;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8px 28px 8px 8px;
+    word-break: break-word;
+    font-size: 13px;
+}
+.proc-file::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(225deg, #ddd 50%, white 50%);
+    border-left: 1px solid #888;
+    border-bottom: 1px solid #888;
+}
+.proc-file-label {
+    display: block;
+    width: 100%;
+    text-align: center;
+    pointer-events: none;
+}
+[data-mode="connect"] .proc-file:hover .conn-dot { opacity: 1; transform: scale(1.4); }
+[data-mode="connect"] .proc-file .conn-dot        { opacity: 0.4; }
+.proc-file:hover .conn-dot                        { opacity: 1; }
+
 /* --- process+link node --- */
 .proc-doc {
     position: relative;
@@ -379,3 +417,9 @@ li.d .conn-dot-top    { top: 81px;  bottom: auto; }
 li.d .conn-dot-bottom { top: 212px; bottom: auto; }
 li.d .conn-dot-left   { top: 146px; }
 li.d .conn-dot-right  { top: 146px; }
+
+/* if2: yes=bottom, no=right — swap y/n label positions + distinct color */
+li.d.if2 .y { right: 65px;  top: auto; bottom: 75px; }
+li.d.if2 .n { right: -32px; bottom: auto; top: 116px; }
+li.d.if2 .diamond          { border-bottom-color: #a8d0ff; }
+li.d.if2 .diamond::after   { border-top-color: #a8d0ff; }
