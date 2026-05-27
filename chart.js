@@ -160,6 +160,13 @@ window.addEventListener('DOMContentLoaded', function () {
                 mkEndflow(L, gx(L), i);
                 advance(L);
                 break;
+            case 'file': {
+                var label = tokens[i + 1] || '';
+                tokens[i + 1] = null;
+                mkProcFile(L, gx(L), label.trim(), i, false);
+                advance(L);
+                break;
+            }
             case 'endprocess':
             case 'none':
                 break;
