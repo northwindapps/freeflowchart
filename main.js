@@ -1,7 +1,7 @@
 var ta = null;
 var ta2 = null;
 var str = '';
-var reservedWordsList = ['if','if2','else','endif','endthen','endflow','none','then','endprocess','endelse','none','file'];
+var reservedWordsList = ['if','if2','else','endif','endthen','endflow','none','then','endprocess','endelse','none','file','db'];
 let tokenList = [];
 let rwList = [];
 var token = '';
@@ -97,6 +97,12 @@ function getValue(data){
            }
 
            if (newtoken == 'file') {
+                tokenList.push(newtoken);
+                rwList.push(newtoken);
+                token = '';
+           }
+
+           if (newtoken == 'db') {
                 tokenList.push(newtoken);
                 rwList.push(newtoken);
                 token = '';

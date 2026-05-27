@@ -53,6 +53,7 @@
         document.querySelectorAll('div.endflow').forEach(addDots);
         document.querySelectorAll('.proc-doc').forEach(addDots);
         document.querySelectorAll('.proc-file').forEach(addDots);
+        document.querySelectorAll('.proc-db').forEach(addDots);
     }
 
     function getConnEl(id) {
@@ -67,6 +68,8 @@
         if (pd) return pd;
         var pf = li.querySelector('.proc-file');
         if (pf) return pf;
+        var pdb = li.querySelector('.proc-db');
+        if (pdb) return pdb;
         return li;
     }
 

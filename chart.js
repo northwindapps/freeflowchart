@@ -167,6 +167,26 @@ window.addEventListener('DOMContentLoaded', function () {
                 advance(L);
                 break;
             }
+            case 'db': {
+                var label = tokens[i + 1] || '';
+                tokens[i + 1] = null;
+                var trimmedDb = label.trim();
+                var fmDb = trimmedDb.match(/^(.*?)\s+<-\s+file\(([^)]*)\)\s*$/i);
+                if (fmDb) {
+                    var dbLabel = fmDb[1].trim();
+                    var fileLabel = fmDb[2].trim();
+                    var colX = gx(L);
+                    mkProcDb(L, colX, dbLabel, i);
+                    advance(L);
+                    var fileId = '__f' + i;
+                    mkProcFile(L, colX, fileLabel !== 'none' ? fileLabel : '', fileId, true, gy(L) - 180);
+                    autoConns.push({ fromId: fileId, fromSide: 'bottom', toId: i, toSide: 'top' });
+                } else {
+                    mkProcDb(L, gx(L), trimmedDb, i);
+                    advance(L);
+                }
+                break;
+            }
             case 'endprocess':
             case 'none':
                 break;
@@ -232,6 +252,14 @@ window.addEventListener('DOMContentLoaded', function () {
         li.style.top = (overrideY !== undefined ? overrideY : gy(L)) + 'px';
         mainUL.appendChild(li);
         if (!skipConn) connectToPrev(L, id);
+    }
+
+    function mkProcDb(L, px, label, id) {
+        var li = document.createElement('li');
+        li.id = id;
+        li.innerHTML = '<div class="proc-db"><span class="proc-db-label">' + (label || '') + '</span></div>';
+        place(li, L, px);
+        connectToPrev(L, id);
     }
 
     function mkProcDoc(L, px, label, url, id) {

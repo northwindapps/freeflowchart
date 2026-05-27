@@ -302,6 +302,58 @@ li.half div.endflow {
 [data-mode="connect"] .proc-file .conn-dot        { opacity: 0.4; }
 .proc-file:hover .conn-dot                        { opacity: 1; }
 
+/* --- database/cylinder node --- */
+.proc-db {
+    position: relative;
+    top: 98px;
+    width: 180px;
+    height: 80px;
+    background: #e8f4ff;
+    border-left: 1px solid #6ab0ff;
+    border-right: 1px solid #6ab0ff;
+    border-bottom: 1px solid #6ab0ff;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 4px 8px;
+    margin: 0 auto;
+}
+.proc-db::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: -1px;
+    right: -1px;
+    height: 40px;
+    background: #bdd9ff;
+    border: 1px solid #6ab0ff;
+    border-radius: 50%;
+    z-index: 1;
+}
+.proc-db::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: -1px;
+    right: -1px;
+    height: 40px;
+    background: #e8f4ff;
+    border: 1px solid #6ab0ff;
+    border-radius: 50%;
+}
+.proc-db-label {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: 100%;
+    pointer-events: none;
+}
+[data-mode="connect"] .proc-db:hover .conn-dot { opacity: 1; transform: scale(1.4); }
+[data-mode="connect"] .proc-db .conn-dot        { opacity: 0.4; }
+.proc-db:hover .conn-dot                        { opacity: 1; }
+
 /* --- process+link node --- */
 .proc-doc {
     position: relative;
