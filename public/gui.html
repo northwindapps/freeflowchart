@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowchart Builder</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="./drag.js"></script>
+    <script src="./connect.js"></script>
+    <style>
+        .canvas-wrap {
+            position: absolute;
+            top: 50px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: auto;
+            background: #fafafa;
+        }
+        #main {
+            min-width: 3000px;
+            min-height: 2000px;
+        }
+
+        /* process node with built-in link field */
+        .proc-doc {
+            position: relative;
+            top: 80px;
+            width: 220px;
+            height: 140px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #4a9eff;
+            border-radius: 5px;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .proc-doc-label {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 8px;
+            text-align: center;
+            cursor: text;
+        }
+        .proc-doc-label:hover {
+            background: aquamarine;
+        }
+        .proc-doc-url {
+            border: none;
+            border-top: 1px solid #c0d8ff;
+            background: #f0f6ff;
+            padding: 5px 8px;
+            font-size: 11px;
+            width: 100%;
+            outline: none;
+            box-sizing: border-box;
+            color: #333;
+        }
+        .proc-doc-url:focus {
+            background: #e6f0ff;
+        }
+
+        /* file/document node */
+        .proc-file {
+            position: relative;
+            top: 80px;
+            width: 220px;
+            height: 140px;
+            background: white;
+            border: 1px solid #888;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8px 28px 8px 8px;
+            word-break: break-word;
+            font-size: 13px;
+        }
+        .proc-file::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(225deg, #ddd 50%, white 50%);
+            border-left: 1px solid #888;
+            border-bottom: 1px solid #888;
+        }
+        .proc-file-label {
+            display: block;
+            width: 100%;
+            text-align: center;
+            cursor: text;
+        }
+        .proc-file-label:hover { background: aquamarine; }
+        [data-mode="connect"] .proc-file:hover .conn-dot { opacity: 1; transform: scale(1.4); }
+        [data-mode="connect"] .proc-file .conn-dot        { opacity: 0.4; }
+        .proc-file:hover .conn-dot                        { opacity: 1; }
+
+        /* connect-mode dot visibility for proc-doc */
+        [data-mode="connect"] .proc-doc:hover .conn-dot { opacity: 1; transform: scale(1.4); }
+        [data-mode="connect"] .proc-doc .conn-dot        { opacity: 0.4; }
+        .proc-doc:hover .conn-dot                        { opacity: 1; }
+
+        /* database/cylinder node */
+        .proc-db {
+            position: relative;
+            top: 98px;
+            width: 180px;
+            height: 80px;
+            background: #e8f4ff;
+            border-left: 1px solid #6ab0ff;
+            border-right: 1px solid #6ab0ff;
+            border-bottom: 1px solid #6ab0ff;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4px 8px;
+            margin: 0 auto;
+        }
+        .proc-db::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -1px;
+            right: -1px;
+            height: 40px;
+            background: #bdd9ff;
+            border: 1px solid #6ab0ff;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .proc-db::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: -1px;
+            right: -1px;
+            height: 40px;
+            background: #e8f4ff;
+            border: 1px solid #6ab0ff;
+            border-radius: 50%;
+        }
+        .proc-db-label {
+            position: relative;
+            z-index: 2;
+            display: block;
+            width: 100%;
+            pointer-events: none;
+        }
+        [data-mode="connect"] .proc-db:hover .conn-dot { opacity: 1; transform: scale(1.4); }
+        [data-mode="connect"] .proc-db .conn-dot        { opacity: 0.4; }
+        .proc-db:hover .conn-dot                        { opacity: 1; }
+
+        .ctx-menu {
+            position: fixed;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            min-width: 140px;
+            font-size: 13px;
+            padding: 4px 0;
+            z-index: 3000;
+            display: none;
+        }
+        .ctx-item {
+            padding: 8px 16px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .ctx-item:hover { background: #f0f4ff; }
+        .ctx-item.danger { color: #c00; }
+        .ctx-sep {
+            border: none;
+            border-top: 1px solid #eee;
+            margin: 3px 0;
+        }
+    </style>
+</head>
+<body data-mode="move">
+
+    <div class="toolbar">
+        <button class="tool-btn active" id="btn-move">&#9654; Move</button>
+        <button class="tool-btn" id="btn-connect">&#9135; Connect</button>
+        <!-- authoring buttons removed (Option A: gui is viewer only)
+        <button class="tool-btn" id="btn-add-process">&#9633; Process</button>
+        <button class="tool-btn" id="btn-add-procdoc">&#9633; Process+Link</button>
+        <button class="tool-btn" id="btn-add-decision">&#9671; Decision</button>
+        <button class="tool-btn" id="btn-add-decision2">&#9671; Decision2</button>
+        <button class="tool-btn" id="btn-add-endflow">&#9711; End</button>
+        <button class="tool-btn" id="btn-add-file">&#128196; File</button>
+        <button class="tool-btn" id="btn-save">&#128190; Save</button>
+        -->
+        <label class="tool-btn" style="cursor:default;">
+            <input type="range" id="scale-slider" min="0.1" max="1.0" step="0.05" value="1.0" style="width:100px;vertical-align:middle;">
+            <span id="scale-label" style="font-size:12px;margin-left:4px;">100%</span>
+        </label>
+        <button class="tool-btn" id="btn-load">&#128194; Load</button>
+        <input type="file" id="load-file-input" accept=".txt" style="display:none;">
+    </div>
+
+    <div id="save-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:6000;align-items:center;justify-content:center;">
+        <div style="background:white;border-radius:8px;padding:20px;width:540px;max-height:80vh;display:flex;flex-direction:column;gap:10px;box-shadow:0 8px 30px rgba(0,0,0,0.25);">
+            <strong style="font-size:14px;">Export DSL</strong>
+            <textarea id="save-ta" spellcheck="false" style="flex:1;min-height:320px;font-family:monospace;font-size:12px;border:1px solid #ccc;border-radius:4px;padding:8px;resize:vertical;"></textarea>
+            <div style="display:flex;gap:8px;justify-content:flex-end;">
+                <button id="save-copy-btn" style="padding:5px 14px;border:1px solid #ccc;border-radius:4px;cursor:pointer;">Copy</button>
+                <button id="save-dl-btn" style="padding:5px 14px;border:1px solid #ccc;border-radius:4px;cursor:pointer;">Download .txt</button>
+                <button id="save-close-btn" style="padding:5px 14px;border:1px solid #ccc;border-radius:4px;cursor:pointer;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="canvas-wrap">
+        <ul id="main"></ul>
+    </div>
+
+    <div class="ctx-menu" id="ctx-menu">
+        <div class="ctx-item" id="ctx-edit">&#9998; Edit text</div>
+        <hr class="ctx-sep">
+        <div class="ctx-item danger" id="ctx-delete">&#10007; Delete</div>
+    </div>
+
+    <script>
+        (function () {
+            var body = document.body;
+            var nodeSeq = 0;
+            var dropX = 40, dropY = 40;
+
+            // --- toolbar mode ---
+            document.getElementById('btn-move').addEventListener('click', function () {
+                body.dataset.mode = 'move';
+                this.classList.add('active');
+                document.getElementById('btn-connect').classList.remove('active');
+            });
+            document.getElementById('btn-connect').addEventListener('click', function () {
+                body.dataset.mode = 'connect';
+                this.classList.add('active');
+                document.getElementById('btn-move').classList.remove('active');
+            });
+            document.getElementById('scale-slider').addEventListener('input', function () {
+                var v = parseFloat(this.value);
+                document.getElementById('main').style.transform = 'scale(' + v + ')';
+                document.getElementById('main').style.transformOrigin = 'top left';
+                document.getElementById('scale-label').textContent = Math.round(v * 100) + '%';
+                window._chartScale = v;
+            });
+
+            // --- helpers ---
+            function makeId() { return 'gn' + (++nodeSeq); }
+
+            function nextPos() {
+                var pos = [dropX, dropY];
+                dropX += 50;
+                if (dropX > 600) { dropX = 40; dropY += 50; }
+                return pos;
+            }
+
+            function placeNode(li, x, y) {
+                li.style.position = 'absolute';
+                li.style.left = x + 'px';
+                li.style.top  = y + 'px';
+                document.getElementById('main').appendChild(li);
+            }
+
+            function makeEditable(el, defaultText) {
+                el.contentEditable = 'true';
+                el.focus();
+                var range = document.createRange();
+                range.selectNodeContents(el);
+                var sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+                function finish() {
+                    el.contentEditable = 'false';
+                    el.removeEventListener('blur', finish);
+                    el.removeEventListener('keydown', onKey);
+                }
+                function onKey(e) {
+                    if (e.key === 'Enter')  { e.preventDefault(); el.blur(); }
+                    if (e.key === 'Escape') { el.textContent = defaultText; el.blur(); }
+                }
+                el.addEventListener('blur', finish);
+                el.addEventListener('keydown', onKey);
+            }
+
+            // --- node creators ---
+            function createProcess(x, y) {
+                var id = makeId();
+                var li = document.createElement('li');
+                li.id = id;
+                li.innerHTML = '<p class="process">Process</p>';
+                placeNode(li, x, y);
+                makeDraggable(li);
+                var p = li.querySelector('p.process');
+                if (window._addConnNode) window._addConnNode(p);
+                makeEditable(p, 'Process');
+                p.addEventListener('dblclick', function (e) {
+                    e.stopPropagation();
+                    makeEditable(p, p.textContent);
+                });
+            }
+
+            function createProcDoc(x, y) {
+                var id = makeId();
+                var li = document.createElement('li');
+                li.id = id;
+                li.innerHTML =
+                    '<div class="proc-doc">' +
+                    '<span class="proc-doc-label">Process</span>' +
+                    '<input type="text" class="proc-doc-url" placeholder="URL or file path">' +
+                    '</div>';
+                placeNode(li, x, y);
+                makeDraggable(li);
+                var box      = li.querySelector('.proc-doc');
+                var labelEl  = li.querySelector('.proc-doc-label');
+                var urlInput = li.querySelector('.proc-doc-url');
+                if (window._addConnNode) window._addConnNode(box);
+                makeEditable(labelEl, 'Process');
+                labelEl.addEventListener('dblclick', function (e) {
+                    e.stopPropagation();
+                    makeEditable(labelEl, labelEl.textContent);
+                });
+                urlInput.addEventListener('keydown', function (e) {
+                    if (e.key === 'Enter' && this.value.trim()) {
+                        window.open(this.value.trim(), '_blank');
+                    }
+                });
+            }
+
+            function createDecision(x, y) {
+                var id = makeId();
+                var li = document.createElement('li');
+                li.id = id;
+                li.className = 'd';
+                li.innerHTML =
+                    '<div class="diamond"><p class="d-body">Decision</p></div>' +
+                    '<span class="y">yes</span><span class="n">no</span>';
+                placeNode(li, x, y);
+                makeDraggable(li);
+                if (window._addConnNode) window._addConnNode(li);
+                var db = li.querySelector('.d-body');
+                makeEditable(db, 'Decision');
+                db.addEventListener('dblclick', function (e) {
+                    e.stopPropagation();
+                    makeEditable(db, db.textContent);
+                });
+            }
+
+            function createDecision2(x, y) {
+                var id = makeId();
+                var li = document.createElement('li');
+                li.id = id;
+                li.className = 'd if2';
+                li.innerHTML =
+                    '<div class="diamond"><p class="d-body">Decision</p></div>' +
+                    '<span class="y">yes</span><span class="n">no</span>';
+                placeNode(li, x, y);
+                makeDraggable(li);
+                if (window._addConnNode) window._addConnNode(li);
+                var db = li.querySelector('.d-body');
+                makeEditable(db, 'Decision');
+                db.addEventListener('dblclick', function (e) {
+                    e.stopPropagation();
+                    makeEditable(db, db.textContent);
+                });
+            }
+
+            function createFile(x, y) {
+                var id = makeId();
+                var li = document.createElement('li');
+                li.id = id;
+                li.innerHTML = '<div class="proc-file"><span class="proc-file-label">File</span></div>';
+                placeNode(li, x, y);
+                makeDraggable(li);
+                var box     = li.querySelector('.proc-file');
+                var labelEl = li.querySelector('.proc-file-label');
+                if (window._addConnNode) window._addConnNode(box);
+                makeEditable(labelEl, 'File');
+                labelEl.addEventListener('dblclick', function (e) {
+                    e.stopPropagation();
+                    makeEditable(labelEl, labelEl.textContent);
+                });
+            }
+
+            function createEndflow(x, y) {
+                var id = makeId();
+                var li = document.createElement('li');
+                li.id = id;
+                li.className = 'half ef';
+                li.innerHTML = '<div class="endflow"></div>';
+                placeNode(li, x, y);
+                makeDraggable(li);
+                if (window._addConnNode) window._addConnNode(li.querySelector('div.endflow'));
+            }
+
+            // --- toolbar buttons ---
+            document.getElementById('btn-add-process').addEventListener('click', function () {
+                var pos = nextPos(); createProcess(pos[0], pos[1]);
+            });
+            document.getElementById('btn-add-procdoc').addEventListener('click', function () {
+                var pos = nextPos(); createProcDoc(pos[0], pos[1]);
+            });
+            document.getElementById('btn-add-decision').addEventListener('click', function () {
+                var pos = nextPos(); createDecision(pos[0], pos[1]);
+            });
+            document.getElementById('btn-add-decision2').addEventListener('click', function () {
+                var pos = nextPos(); createDecision2(pos[0], pos[1]);
+            });
+            document.getElementById('btn-add-endflow').addEventListener('click', function () {
+                var pos = nextPos(); createEndflow(pos[0], pos[1]);
+            });
+            document.getElementById('btn-add-file').addEventListener('click', function () {
+                var pos = nextPos(); createFile(pos[0], pos[1]);
+            });
+
+            // --- context menu ---
+            var ctxMenu   = document.getElementById('ctx-menu');
+            var ctxTarget = null;
+
+            function getNodeInfo(target) {
+                if (target.classList.contains('conn-dot')) return null;
+                var proc = target.closest('p.process');
+                if (proc) return { connEl: proc, li: proc.closest('li'), type: 'process', labelEl: proc };
+                var pd = target.closest('.proc-doc');
+                if (pd) return { connEl: pd, li: pd.closest('li'), type: 'proc-doc', labelEl: pd.querySelector('.proc-doc-label') };
+                var d = target.closest('li.d');
+                if (d) return { connEl: d, li: d, type: d.classList.contains('if2') ? 'decision2' : 'decision', labelEl: d.querySelector('.d-body') };
+                var pf = target.closest('.proc-file');
+                if (pf) return { connEl: pf, li: pf.closest('li'), type: 'file', labelEl: pf.querySelector('.proc-file-label') };
+                var ef = target.closest('div.endflow');
+                if (ef) return { connEl: ef, li: ef.closest('li'), type: 'endflow', labelEl: null };
+                return null;
+            }
+
+            function showMenu(x, y, info) {
+                document.getElementById('ctx-edit').style.display = info.labelEl ? '' : 'none';
+                ctxMenu.style.left    = x + 'px';
+                ctxMenu.style.top     = y + 'px';
+                ctxMenu.style.display = 'block';
+            }
+
+            function hideMenu() {
+                ctxMenu.style.display = 'none';
+                ctxTarget = null;
+            }
+
+            document.getElementById('main').addEventListener('contextmenu', function (e) {
+                var info = getNodeInfo(e.target);
+                if (!info) return;
+                e.preventDefault();
+                ctxTarget = info;
+                showMenu(e.clientX, e.clientY, info);
+            });
+
+            document.getElementById('ctx-edit').addEventListener('click', function () {
+                if (ctxTarget && ctxTarget.labelEl) makeEditable(ctxTarget.labelEl, ctxTarget.labelEl.textContent);
+                hideMenu();
+            });
+
+            document.getElementById('ctx-delete').addEventListener('click', function () {
+                if (!ctxTarget) return;
+                if (window._removeConnsFor) window._removeConnsFor(ctxTarget.connEl);
+                ctxTarget.li.parentNode.removeChild(ctxTarget.li);
+                hideMenu();
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!ctxMenu.contains(e.target)) hideMenu();
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') hideMenu();
+            });
+
+            // --- save / export ---
+            function nodeIdOf(el) {
+                if (!el) return null;
+                var li = el.closest('li');
+                return li ? li.id : null;
+            }
+
+            function buildDSL() {
+                var main = document.getElementById('main');
+                var nodeMap = {};
+
+                main.querySelectorAll(':scope > li').forEach(function (li) {
+                    var id = li.id;
+                    if (!id) return;
+                    var type, label = '', url = '';
+
+                    if (li.classList.contains('d')) {
+                        type = li.classList.contains('if2') ? 'decision2' : 'decision';
+                        var db = li.querySelector('.d-body');
+                        label = db ? db.textContent.trim() : 'Decision';
+                    } else if (li.classList.contains('ef')) {
+                        type = 'endflow';
+                    } else if (li.querySelector('.proc-file')) {
+                        type = 'file';
+                        var fl = li.querySelector('.proc-file-label');
+                        label = fl ? fl.textContent.trim() : '';
+                    } else if (li.querySelector('.proc-doc')) {
+                        type = 'process';
+                        var pl = li.querySelector('.proc-doc-label');
+                        var pu = li.querySelector('.proc-doc-url');
+                        label = pl ? pl.textContent.trim() : '';
+                        url   = pu ? pu.value.trim() : '';
+                    } else if (li.querySelector('p.process')) {
+                        type = 'process';
+                        var p = li.querySelector('p.process');
+                        label = p ? p.textContent.trim() : '';
+                    } else {
+                        return;
+                    }
+
+                    nodeMap[id] = {
+                        id: id, type: type, label: label, url: url,
+                        x: parseInt(li.style.left) || 0,
+                        y: parseInt(li.style.top)  || 0
+                    };
+                });
+
+                var conns = window._getConnections ? window._getConnections() : [];
+                var outEdges = {};
+                var inDegree = {};
+                var inEdgesMap = {};
+
+                conns.forEach(function (c) {
+                    var fId = nodeIdOf(c.from);
+                    var tId = nodeIdOf(c.to);
+                    if (!fId || !tId || fId === tId) return;
+                    if (!outEdges[fId]) outEdges[fId] = [];
+                    outEdges[fId].push({ toId: tId, fromSide: c.fromSide });
+                    inDegree[tId] = (inDegree[tId] || 0) + 1;
+                    if (!inEdgesMap[tId]) inEdgesMap[tId] = [];
+                    inEdgesMap[tId].push({ fromId: fId });
+                });
+
+                var allIds = Object.keys(nodeMap);
+                function byPos(a, b) {
+                    var na = nodeMap[a], nb = nodeMap[b];
+                    return na.y !== nb.y ? nb.y - na.y : na.x - nb.x; // desc Y, asc X
+                }
+                var sources = allIds.filter(function (id) { return !inDegree[id]; }).sort(byPos);
+
+                var lines = [];
+                var visited = {};
+
+                function sideRank(s) { return { bottom: 0, right: 1, top: 2, left: 3 }[s] || 4; }
+
+                function emit(id, indent) {
+                    if (visited[id]) return;
+                    visited[id] = true;
+                    var node = nodeMap[id];
+                    if (!node) return;
+                    var pad = Array(indent + 1).join(' ');
+                    var outs = (outEdges[id] || []).slice().sort(function (a, b) {
+                        return sideRank(a.fromSide) - sideRank(b.fromSide);
+                    });
+
+                    if (node.type === 'endflow') {
+                        lines.push(pad + 'endflow');
+                        return;
+                    }
+
+                    if (node.type === 'decision' || node.type === 'decision2') {
+                        var isIf2 = node.type === 'decision2';
+                        lines.push(pad + (isIf2 ? 'if2' : 'if') + ' ' + node.label);
+                        // if: yes=right first, no=bottom second
+                        // if2: yes=bottom first, no=right second
+                        function decRank(s) {
+                            return isIf2
+                                ? ({ bottom:0, right:1, top:2, left:3 }[s] || 4)
+                                : ({ right:0, bottom:1, top:2, left:3 }[s] || 4);
+                        }
+                        var sortedOuts = outs.slice().sort(function (a, b) { return decRank(a.fromSide) - decRank(b.fromSide); });
+                        if (sortedOuts.length >= 2) {
+                            lines.push(pad + 'then');
+                            emit(sortedOuts[0].toId, indent + 1);
+                            lines.push(pad + 'endthen');
+                            lines.push(pad + 'else');
+                            emit(sortedOuts[1].toId, indent + 1);
+                            lines.push(pad + 'endelse');
+                        } else if (sortedOuts.length === 1) {
+                            var isYesPath = isIf2
+                                ? sortedOuts[0].fromSide === 'bottom'
+                                : sortedOuts[0].fromSide === 'right';
+                            if (isYesPath) {
+                                lines.push(pad + 'then');
+                                emit(sortedOuts[0].toId, indent + 1);
+                                lines.push(pad + 'endthen');
+                            } else {
+                                lines.push(pad + 'then');
+                                lines.push(pad + 'endthen');
+                                lines.push(pad + 'else');
+                                emit(sortedOuts[0].toId, indent + 1);
+                                lines.push(pad + 'endelse');
+                            }
+                        }
+                        lines.push(pad + 'endif');
+                        return;
+                    }
+
+                    if (node.type === 'file') {
+                        // Pre-visited by its connected process; if we reach here emit standalone
+                        lines.push(pad + 'file(' + (node.label || 'none') + ')');
+                        outs.forEach(function (o) { emit(o.toId, indent); });
+                        return;
+                    }
+
+                    // Process node — check incoming edges for a file node and annotate
+                    var fileAnn = '';
+                    var fileInputs = (inEdgesMap[id] || []).filter(function (e) {
+                        return nodeMap[e.fromId] && nodeMap[e.fromId].type === 'file' && !visited[e.fromId];
+                    });
+                    if (fileInputs.length > 0) {
+                        var fNode = nodeMap[fileInputs[0].fromId];
+                        visited[fNode.id] = true;
+                        fileAnn = ' <- file(' + (fNode.label || 'none') + ')';
+                    }
+
+                    var urlSuffix = node.url ? ' (' + node.url + ')' : ' (none)';
+                    lines.push(pad + node.label + urlSuffix + fileAnn);
+                    outs.forEach(function (o) { emit(o.toId, indent); });
+                }
+
+                sources.forEach(function (id) { emit(id, 0); });
+                allIds.sort(byPos).forEach(function (id) { if (!visited[id]) emit(id, 0); });
+
+                return lines.join('\n');
+            }
+
+            var saveModal = document.getElementById('save-modal');
+            var saveTa    = document.getElementById('save-ta');
+
+            document.getElementById('btn-save').addEventListener('click', function () {
+                saveTa.value = buildDSL();
+                saveModal.style.display = 'flex';
+            });
+            document.getElementById('save-close-btn').addEventListener('click', function () {
+                saveModal.style.display = 'none';
+            });
+            document.getElementById('save-copy-btn').addEventListener('click', function () {
+                saveTa.select();
+                document.execCommand('copy');
+                this.textContent = 'Copied!';
+                var btn = this;
+                setTimeout(function () { btn.textContent = 'Copy'; }, 1500);
+            });
+            document.getElementById('save-dl-btn').addEventListener('click', function () {
+                var blob = new Blob([saveTa.value], { type: 'text/plain' });
+                var a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'flowchart.txt';
+                a.click();
+                URL.revokeObjectURL(a.href);
+            });
+            saveModal.addEventListener('click', function (e) {
+                if (e.target === saveModal) saveModal.style.display = 'none';
+            });
+
+            // --- load ---
+            function parseDSL(text) {
+                var reserved = ['endprocess','endthen','endelse','endflow','endif','if2','if','then','else','none'];
+                var tokens = [];
+                text.split('\n').forEach(function (line) {
+                    var t = line.trim();
+                    if (!t) return;
+                    var matched = false;
+                    for (var i = 0; i < reserved.length; i++) {
+                        var rw = reserved[i];
+                        if (t === rw) { tokens.push(rw); matched = true; break; }
+                        if (t.indexOf(rw + ' ') === 0) {
+                            tokens.push(rw);
+                            tokens.push(t.slice(rw.length + 1));
+                            matched = true;
+                            break;
+                        }
+                    }
+                    if (!matched) tokens.push(t);
+                });
+                return tokens;
+            }
+
+            document.getElementById('btn-load').addEventListener('click', function () {
+                document.getElementById('load-file-input').click();
+            });
+            document.getElementById('load-file-input').addEventListener('change', function (e) {
+                var file = e.target.files[0];
+                if (!file) return;
+                var reader = new FileReader();
+                reader.onload = function (ev) {
+                    var tokens = parseDSL(ev.target.result);
+                    sessionStorage.setItem('src', JSON.stringify(tokens));
+                    window.location.href = './chart.html';
+                };
+                reader.readAsText(file);
+                this.value = '';
+            });
+        })();
+    </script>
+
+</body>
+</html>

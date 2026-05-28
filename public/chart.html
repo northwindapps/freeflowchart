@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="./chart.js"></script>
+    <script src="./drag.js"></script>
+    <script src="./connect.js"></script>
+</head>
+
+<body data-mode="move">
+
+    <div class="toolbar">
+        <button class="tool-btn active" id="btn-move">&#9654; Move</button>
+        <button class="tool-btn" id="btn-connect">&#9135; Connect</button>
+        <label class="tool-btn" style="cursor:default;">
+            <input type="range" id="scale-slider" min="0.1" max="1.0" step="0.05" value="1.0" style="width:100px;vertical-align:middle;">
+            <span id="scale-label" style="font-size:12px;margin-left:4px;">100%</span>
+        </label>
+    </div>
+
+    <script>
+        (function() {
+            var body = document.body;
+            document.getElementById('btn-move').addEventListener('click', function() {
+                body.dataset.mode = 'move';
+                document.getElementById('btn-move').classList.add('active');
+                document.getElementById('btn-connect').classList.remove('active');
+            });
+            document.getElementById('btn-connect').addEventListener('click', function() {
+                body.dataset.mode = 'connect';
+                document.getElementById('btn-connect').classList.add('active');
+                document.getElementById('btn-move').classList.remove('active');
+            });
+            document.getElementById('scale-slider').addEventListener('input', function() {
+                var v = parseFloat(this.value);
+                document.getElementById('main').style.transform = 'scale(' + v + ')';
+                document.getElementById('main').style.transformOrigin = 'top left';
+                document.getElementById('scale-label').textContent = Math.round(v * 100) + '%';
+                window._chartScale = v;
+            });
+        })();
+    </script>
+
+    <div class="foo">
+        <ul id="main">
+        
+        </ul>
+    </div>
+</body>
+
+</html>
