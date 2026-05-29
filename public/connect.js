@@ -151,7 +151,7 @@
 
     function bezierD(x1, y1, side1, x2, y2, side2) {
         var dist = Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-        var cp = Math.max(50, dist * 0.45);
+        var cp = Math.min(dist / 2, Math.max(20, dist * 0.4));
 
         var cx1 = x1, cy1 = y1, cx2 = x2, cy2 = y2;
         if (side1 === 'right')  cx1 = x1 + cp;
