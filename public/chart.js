@@ -6,6 +6,8 @@ window.addEventListener('DOMContentLoaded', function () {
     var NODE_W = 220, H_GAP = 100, ROW_H = 320, TOP_BUFFER = 200;
     var curX = {}, laneY = {}, diamondX = {}, diamondType = {};
     var autoConns = [], lastNodeId = {}, lastDiamondId = {};
+    var maxPlacedY = 0;
+    var sectionBaseY = 0;
     var pendingBranch = null;
     var pendingExits = [];        // explicit endif/endelse exits → drain on any node
     var pendingExitsStack = [];   // stack for saving pendingExits across else-branches
@@ -13,7 +15,7 @@ window.addEventListener('DOMContentLoaded', function () {
     var diamondHadElse = {};      // diamondId -> true when an else was seen for it
 
     function gx(L) { return curX[L] || 0; }
-    function gy(L) { return (laneY[L] !== undefined ? laneY[L] : L * ROW_H) + TOP_BUFFER; }
+    function gy(L) { return (laneY[L] !== undefined ? laneY[L] : L * ROW_H + sectionBaseY) + TOP_BUFFER; }
     function advance(L) { curX[L] = gx(L) + NODE_W + H_GAP; }
 
     function connectToPrev(L, id) {
@@ -154,12 +156,25 @@ window.addEventListener('DOMContentLoaded', function () {
                 lastNodeId[L] = undefined;
                 pendingBranch = null;
                 curX[L] = Math.max(gx(L), gx(L + 1) || 0);
+                // When top-level endif leaves no pending connections, start a new flow section
+                if (L === 0 && pendingExits.length === 0) {
+                    sectionBaseY = maxPlacedY + 220;
+                    Object.keys(laneY).forEach(function(k) { delete laneY[k]; });
+                    curX[0] = 0;
+                }
                 break;
             }
-            case 'endflow':
-                mkEndflow(L, gx(L), i);
+            case 'endflow': {
+                var efLabel = tokens[i + 1] || '';
+                if (efLabel && !['if','if2','else','endif','endthen','endflow','endelse','endprocess','then','none','file','db'].includes(efLabel.trim())) {
+                    tokens[i + 1] = null;
+                } else {
+                    efLabel = '';
+                }
+                mkEndflow(L, gx(L), i, efLabel.trim());
                 advance(L);
                 break;
+            }
             case 'file': {
                 var label = tokens[i + 1] || '';
                 tokens[i + 1] = null;
@@ -220,12 +235,14 @@ window.addEventListener('DOMContentLoaded', function () {
     }
 
     window._autoConns = autoConns;
+    mainUL.style.minHeight = (maxPlacedY + 600) + 'px';
 
     function place(li, L, px) {
         li.style.position = 'absolute';
         li.style.left = px + 'px';
         li.style.top  = gy(L) + 'px';
         mainUL.appendChild(li);
+        maxPlacedY = Math.max(maxPlacedY, gy(L));
     }
 
     function mkProcess(L, px, body, id) {
@@ -251,6 +268,7 @@ window.addEventListener('DOMContentLoaded', function () {
         li.style.left = px + 'px';
         li.style.top = (overrideY !== undefined ? overrideY : gy(L)) + 'px';
         mainUL.appendChild(li);
+        if (overrideY === undefined) maxPlacedY = Math.max(maxPlacedY, gy(L));
         if (!skipConn) connectToPrev(L, id);
     }
 
@@ -291,11 +309,12 @@ window.addEventListener('DOMContentLoaded', function () {
         lastDiamondId[L] = id;
     }
 
-    function mkEndflow(L, px, id) {
+    function mkEndflow(L, px, id, label) {
         var li = document.createElement('li');
         li.id = id;
         li.className = 'half ef';
-        li.innerHTML = '<div class="endflow"></div>';
+        li.innerHTML = '<div class="endflow"></div><input type="text" class="endflow-label">';
+        if (label) li.querySelector('.endflow-label').value = label;
         place(li, L, px);
         connectToPrev(L, id);
         lastNodeId[L] = undefined;

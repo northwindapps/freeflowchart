@@ -71,21 +71,7 @@
       <div class="row py-lg-5">
         <div class="col-lg-9 col-md-8 mx-auto full">
           <h2 class="fw-light">Example 2 — Simple if/else</h2>
-          <pre class="bg-light p-3 rounded" style="font-size:13px;">Flow starts
-if are you vegitalian?
-  then
-    db Users Database &lt;- file(Document)
-    soy patty(this is ref url) &lt;- file(Document)
-    enjoy
-    endflow
-  endthen
-else
-    beef patty &lt;- file(Document)
-    enjoy
-    endflow
-  endelse
-endif</pre>
-          <textarea id="ta2" style="display:none;">Flow starts
+          <textarea name="" class="form-control" id="ta2" cols="30" rows="10">Flow starts
 if are you vegitalian?
   then
     db Users Database <- file(Document)
@@ -108,13 +94,7 @@ endif</textarea>
       <div class="row py-lg-5">
         <div class="col-lg-9 col-md-8 mx-auto full">
           <h2 class="fw-light">Example 3 — Linear flow</h2>
-          <pre class="bg-light p-3 rounded" style="font-size:13px;">Flow starts
-db Product Catalog &lt;- file(products.xlsx)
-select item
-db Cart Database &lt;- file(cart.xlsx)
-checkout
-endflow</pre>
-          <textarea id="ta3" style="display:none;">Flow starts
+          <textarea name="" class="form-control" id="ta3" cols="30" rows="10">Flow starts
 db Product Catalog <- file(products.xlsx)
 select item
 db Cart Database <- file(cart.xlsx)
@@ -129,21 +109,7 @@ endflow</textarea>
       <div class="row py-lg-5">
         <div class="col-lg-9 col-md-8 mx-auto full">
           <h2 class="fw-light">Example 4 — Chained if2 (no else)</h2>
-          <pre class="bg-light p-3 rounded" style="font-size:13px;">Flow starts
-if2 member?
-  then
-    db Member DB &lt;- file(members.xlsx)
-    apply discount
-  endthen
-endif
-if2 coupon?
-  then
-    apply coupon
-  endthen
-endif
-process payment
-endflow</pre>
-          <textarea id="ta4" style="display:none;">Flow starts
+          <textarea name="" class="form-control" id="ta4" cols="30" rows="10">Flow starts
 if2 member?
   then
     db Member DB <- file(members.xlsx)

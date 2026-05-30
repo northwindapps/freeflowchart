@@ -158,6 +158,21 @@
         [data-mode="connect"] .proc-db .conn-dot        { opacity: 0.4; }
         .proc-db:hover .conn-dot                        { opacity: 1; }
 
+        .endflow-label {
+            position: absolute;
+            top: 175px;
+            left: 0;
+            width: 110px;
+            font-size: 11px;
+            border: none;
+            background: transparent;
+            text-align: center;
+            outline: none;
+            color: #555;
+            padding: 2px 4px;
+            box-sizing: border-box;
+        }
+
         .ctx-menu {
             position: fixed;
             background: white;
@@ -395,7 +410,7 @@
                 var li = document.createElement('li');
                 li.id = id;
                 li.className = 'half ef';
-                li.innerHTML = '<div class="endflow"></div>';
+                li.innerHTML = '<div class="endflow"></div><input type="text" class="endflow-label">';
                 placeNode(li, x, y);
                 makeDraggable(li);
                 if (window._addConnNode) window._addConnNode(li.querySelector('div.endflow'));
@@ -501,6 +516,8 @@
                         label = db ? db.textContent.trim() : 'Decision';
                     } else if (li.classList.contains('ef')) {
                         type = 'endflow';
+                        var el = li.querySelector('.endflow-label');
+                        label = el ? el.value.trim() : '';
                     } else if (li.querySelector('.proc-file')) {
                         type = 'file';
                         var fl = li.querySelector('.proc-file-label');
@@ -565,7 +582,7 @@
                     });
 
                     if (node.type === 'endflow') {
-                        lines.push(pad + 'endflow');
+                        lines.push(pad + 'endflow' + (node.label ? ' ' + node.label : ''));
                         return;
                     }
 

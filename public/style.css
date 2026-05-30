@@ -23,8 +23,6 @@ html,body{
 .foo{
     background-color: white;
     display: block;
-    position: sticky;
-    height: 30px;
 }
 
 .easy{
@@ -146,6 +144,21 @@ a{
     border-left: 1px solid gainsboro;
     width: 185px;
     height: 313px;
+}
+
+.endflow-label {
+    position: absolute;
+    top: 175px;
+    left: 0;
+    width: 110px;
+    font-size: 11px;
+    border: none;
+    background: transparent;
+    text-align: center;
+    outline: none;
+    color: #555;
+    padding: 2px 4px;
+    box-sizing: border-box;
 }
 
 .endflow{
