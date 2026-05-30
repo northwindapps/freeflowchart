@@ -80,10 +80,26 @@ if are you vegitalian?
     endflow
   endthen
   else
-    there is no food for you here.
+    beef patty &lt;- file(Document)
+    enjoy
     endflow
   endelse
 endif</pre>
+          <textarea id="ta2" style="display:none;">Flow starts
+if are you vegitalian?
+  then
+    db Users Database <- file(Document)
+    soy patty(this is ref url) <- file(Document)
+    enjoy
+    endflow
+  endthen
+  else
+    beef patty <- file(Document)
+    enjoy
+    endflow
+  endelse
+endif</textarea>
+          <button type="button" class="btn btn-secondary mt-2" onclick="getSrc2()">Build Chart</button>
         </div>
       </div>
     </div>
