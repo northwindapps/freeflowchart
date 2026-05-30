@@ -130,6 +130,41 @@ endflow</textarea>
 
     <div class="wrapper">
       <div class="row py-lg-5">
+        <div class="col-lg-9 col-md-8 mx-auto full">
+          <h2 class="fw-light">Example 5 — Multiple flows with endflow labels</h2>
+          <textarea name="" class="form-control" id="ta5" cols="30" rows="20">Order Flow
+if member?
+  then
+    db Member DB <- file(members.xlsx)
+    apply discount
+    endflow discount applied
+  endthen
+else
+    regular price
+    endflow no discount
+  endelse
+endif
+Payment Flow
+if card valid?
+  then
+    charge card
+    endflow payment done
+  endthen
+else
+    retry
+    endflow payment failed
+  endelse
+endif
+Confirmation Flow
+send email
+endflow order complete</textarea>
+          <button type="button" class="btn btn-secondary mt-2" onclick="getSrc5()">Build Chart</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrapper">
+      <div class="row py-lg-5">
         <div class="col-lg-9 col-md-8 mx-auto full flex-center">
 
           <div class="inner">
