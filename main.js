@@ -1,5 +1,7 @@
 var ta = null;
 var ta2 = null;
+var ta3 = null;
+var ta4 = null;
 var str = '';
 var reservedWordsList = ['if','if2','else','endif','endthen','endflow','none','then','endprocess','endelse','none','file','db'];
 let tokenList = [];
@@ -125,9 +127,17 @@ function getValue(data){
     window.location.href = './chart.html';
 }
 
+function getSrc4 () {
+    var src = ta4.value.replace(/\n\r?/g, ' <>');
+    src = src + '<>';
+    getValue(src)
+}
+
 window.onload = function() {
-    ta = document.querySelector("#ta");
+    ta  = document.querySelector("#ta");
     ta2 = document.querySelector("#ta2");
-    console.log('welcome back'); 
+    ta3 = document.querySelector("#ta3");
+    ta4 = document.querySelector("#ta4");
+    console.log('welcome back');
 };
 
