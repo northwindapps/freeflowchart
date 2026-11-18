@@ -3,8 +3,9 @@ var ta2 = null;
 var ta3 = null;
 var ta4 = null;
 var ta5 = null;
+var ta6 = null;
 var str = '';
-var reservedWordsList = ['if','if2','else','endif','endthen','endflow','none','then','endprocess','endelse','none','file','db'];
+var reservedWordsList = ['if','if2','else','endif','endthen','endflow','none','then','endprocess','endelse','none','file','db','pagebreak'];
 let tokenList = [];
 let rwList = [];
 var token = '';
@@ -110,6 +111,12 @@ function getValue(data){
                 rwList.push(newtoken);
                 token = '';
            }
+
+           if (newtoken == 'pagebreak') {
+                tokenList.push(newtoken);
+                rwList.push(newtoken);
+                token = '';
+           }
         }
 
         token = token.concat('',key);
@@ -140,12 +147,19 @@ function getSrc5 () {
     getValue(src)
 }
 
+function getSrc6 () {
+    var src = ta6.value.replace(/\n\r?/g, ' <>');
+    src = src + '<>';
+    getValue(src)
+}
+
 window.onload = function() {
     ta  = document.querySelector("#ta");
     ta2 = document.querySelector("#ta2");
     ta3 = document.querySelector("#ta3");
     ta4 = document.querySelector("#ta4");
     ta5 = document.querySelector("#ta5");
+    ta6 = document.querySelector("#ta6");
     console.log('welcome back');
 };
 

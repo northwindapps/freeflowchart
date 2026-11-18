@@ -70,7 +70,7 @@
             windowHeight: document.documentElement.scrollHeight,
             ignoreElements: function (el) {
                 return el.id === 'conn-svg' ||
-                       (el.classList && (el.classList.contains('toolbar') || el.classList.contains('conn-dot')));
+                       (el.classList && (el.classList.contains('toolbar') || el.classList.contains('conn-dot') || el.classList.contains('sheet-tabs')));
             }
         });
 

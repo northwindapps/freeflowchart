@@ -44,5 +44,6 @@ The user types pseudo-code into a `<textarea>`. On "Build Chart":
 | `endprocess` | End a process block |
 | `endflow` | Terminate the flow |
 | `none` | Spacer (extends a lane with connector lines, no process box) |
+| `pagebreak <name>` | Start a new, independent page (sheet). Top level only; `chart.html?page=N` shows page N with sheet tabs |
 
 Non-reserved words between keywords become process node labels.

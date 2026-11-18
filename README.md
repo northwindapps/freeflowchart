@@ -30,6 +30,7 @@ Open `index.html` in any browser (or `npx serve .`), type a script, and press **
 | `none` | Spacer — extends a lane with a connector, no box |
 | `file(name)` | Attach a document icon to a process node |
 | `db` | Render a database cylinder node |
+| `pagebreak <name>` | Start a new page (sheet) with an optional name |
 
 Any text that is not a keyword becomes a **process node label**.
 
@@ -75,6 +76,19 @@ endif
 ```
 
 When all branches of an `if/else` end with `endflow`, the next section automatically wraps to a new vertical position — allowing multiple independent flows in one chart.
+
+### Pages (sheets)
+
+```
+pagebreak Plan A
+build in-house
+endflow
+pagebreak Plan B
+buy SaaS
+endflow
+```
+
+A top-level `pagebreak` line starts a new, independent page, like a sheet in a spreadsheet. The chart shows sheet tabs at the bottom to switch pages, and PNG/PDF export saves the page on screen. The name is optional (default: "Page N"). A `pagebreak` inside an `if` block is ignored. To show that a flow continues on another page, end it with e.g. `endflow continues on Plan B`.
 
 ---
 
