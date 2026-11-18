@@ -64,6 +64,10 @@
         var canvas = await window.html2canvas(document.body, {
             x: x, y: y, width: w, height: h,
             scale: RES,
+            // x/y above are document coordinates; without these html2canvas also
+            // applies the page's current scroll, shifting nodes when scrolled.
+            scrollX: 0,
+            scrollY: 0,
             backgroundColor: '#ffffff',
             logging: false,
             windowWidth: document.documentElement.scrollWidth,
